@@ -9,7 +9,7 @@ function btn(i,name,n){const b=document.createElement('button');b.className='cat
 function norm(s){return s.toLowerCase()}
 function filter(){const w=norm(query).split(' ').filter(Boolean);list=[];for(const it of D.items){if(tab>=0&&!it[2].includes(tab))continue;if(w.length){const n=norm(it[1]);let ok=true;for(const x of w)if(!n.includes(x)){ok=false;break}if(!ok)continue}list.push(it)}}
 function card(it,idx){const a=document.createElement('a');a.className='card';a.href='product/'+it[0]+'.html';
- const im=document.createElement('div');im.className='im';const img=document.createElement('img');img.loading='lazy';img.decoding='async';img.src='images/'+it[0]+'_t.webp';img.alt=it[1];im.appendChild(img);
+ const im=document.createElement('div');im.className='im';const img=document.createElement('img');img.loading='lazy';img.decoding='async';img.src='images/'+it[0]+'_0.webp';img.alt=it[1];im.appendChild(img);
  const num=document.createElement('div');num.className='num mono';num.textContent=String(idx+1).padStart(4,'0');im.appendChild(num);a.appendChild(im);
  const info=document.createElement('div');info.className='info';const tag=document.createElement('div');tag.className='tag';tag.textContent=D.tabs[it[2][0]];const nm=document.createElement('div');nm.className='nm';nm.textContent=it[1];info.appendChild(tag);info.appendChild(nm);a.appendChild(info);return a}
 function page(){const f=document.createDocumentFragment();for(let i=shown;i<Math.min(shown+PAGE,list.length);i++)f.appendChild(card(list[i],i));grid.appendChild(f);shown=Math.min(shown+PAGE,list.length);more.hidden=shown>=list.length;more.textContent='Load more ('+(list.length-shown).toLocaleString()+')'}

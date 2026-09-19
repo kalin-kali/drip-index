@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://kalin-kali.github.io/drip-index/sitemap.xml
+Sitemap: https://drip-index.pages.dev/sitemap.xml
