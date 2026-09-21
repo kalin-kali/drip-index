@@ -20,7 +20,7 @@ const MODELS=[ // [name, regex, images/models/<key>.webp]
  ['Dior B22 / B30',/dior.*(b22|b30)/i,'dior'],['LV Trainer',/(\blv\b|louis vuitton).*(trainer|skate|shoe|sneaker)/i,'lv'],['Louboutin',/louboutin/i,'louboutin'],
  ['Golden Goose',/golden goose/i,'goldengoose'],['Yeezy Slides',/yeezy.*(slide|foam)|foam runner/i,'yeezy-slide'],['Triple S',/triple s/i,'balenciaga-triples'],
 ];
-const BRAND_IMG={}; // brand name -> images/brands/<file> (drop logo files here later)
+const BRAND_IMG={"Essentials":"essentials.webp","Corteiz":"corteiz.webp","Trapstar":"trapstar.webp","Amiri":"amiri.webp","Chrome Hearts":"chromehearts.webp","Stussy":"stussy.webp","Hellstar":"hellstar.webp","Gallery Dept":"gallerydept.webp","Denim Tears":"denimtears.webp","Sp5der":"sp5der.webp","Bape":"bape.webp","Supreme":"supreme.webp","Moncler":"moncler.webp","Stone Island":"stoneisland.webp","The North Face":"northface.webp","Ralph Lauren":"ralphlauren.webp","Carhartt":"carhartt.webp","Nike":"nike.webp","Goyard":"goyard.webp","Louis Vuitton":"lv.webp","Gucci":"gucci.webp","Prada":"prada.webp","Dior":"dior.webp","Football kits":"fifa.webp"}; // brand name -> images/brands/<file>
 const BRANDS=[['Essentials',/essentials|fear of god|\bfog\b/i],['Corteiz',/corteiz|crtz/i],['Trapstar',/trapstar/i],['Amiri',/amiri/i],['Chrome Hearts',/chrome ?hearts/i],
  ['Stussy',/stussy|stüssy/i],['Hellstar',/hellstar/i],['Gallery Dept',/gallery ?dept/i],['Denim Tears',/denim tears/i],['Sp5der',/sp5der/i],['Bape',/\bbape\b/i],
  ['Supreme',/supreme/i],['Moncler',/moncler/i],['Stone Island',/stone island/i],['The North Face',/north ?face|\btnf\b/i],['Ralph Lauren',/ralph lauren|\bpolo\b/i],
@@ -28,6 +28,7 @@ const BRANDS=[['Essentials',/essentials|fear of god|\bfog\b/i],['Corteiz',/corte
 const LOOKS=[ // [brand, image, caption, brand regex, product-pick regex]
  ['Corteiz','images/look/corteiz-2.webp','Pista velour tracksuit',/corteiz|crtz/i,/corteiz.*(track|jacket|set|suit)/i],
  ['Essentials','images/look/essentials.webp','Fear of God Essentials hoodie',/essentials|fear of god|\bfog\b/i,/essentials.*hoodie|fog.*hoodie/i],
+ ['Sp5der','images/look/sp5der.webp','Sp5der tracksuit',/sp5der/i,/sp5der.*(track|hoodie|sweat|set|pant)/i],
  ['Hellstar','images/look/hellstar.webp','Hellstar hoodie & sweatpants',/hellstar/i,/hellstar.*(hoodie|sweat|set|pant)/i],
  ['Corteiz','images/look/corteiz-3.webp','Guerillaz camo field jacket',/corteiz|crtz/i,/corteiz.*(jacket|camo|cargo)/i],
  ['Gallery Dept','images/look/gallerydept.webp','Gallery Dept paint logo hoodie',/gallery ?dept/i,/gallery.*(hoodie|sweat)/i],
