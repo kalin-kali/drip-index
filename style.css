@@ -89,3 +89,9 @@ footer .big{font-family:"Archivo",sans-serif;font-weight:800;font-size:40px;lett
 .rel h2{font-family:"IBM Plex Mono",monospace;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin:0 0 16px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+.szh{font-family:"IBM Plex Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--mute);margin:18px 0 8px}
+.sizes{display:flex;flex-wrap:wrap;gap:6px}
+.sz{font-family:"IBM Plex Mono",monospace;font-size:12px;padding:6px 10px;border:1px solid var(--line);min-width:38px;text-align:center}
+.sz:hover{border-color:var(--acc);color:var(--acc)}
+.card .szr{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.05em;color:var(--mute);margin-top:auto}
