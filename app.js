@@ -28,7 +28,11 @@ const BRANDS=[['Essentials',/essentials|fear of god|\bfog\b/i],['Corteiz',/corte
 const LOOKS=[ // [brand, image, caption, brand regex, product-pick regex]
  ['Corteiz','images/look/corteiz-2.webp','Pista velour tracksuit',/corteiz|crtz/i,/corteiz.*(track|jacket|set|suit)/i],
  ['Essentials','images/look/essentials.webp','Fear of God Essentials hoodie',/essentials|fear of god|\bfog\b/i,/essentials.*hoodie|fog.*hoodie/i],
+ ['Sp5der','images/look/sp5der-purple.webp','Sp5der web tracksuit',/sp5der/i,/sp5der.*(track|hoodie|sweat|set|pant)/i],
+ ['Balenciaga','images/look/balenciaga-track.webp','Balenciaga Track',/balenciaga/i,/balenciaga.*track/i],
+ ['Sp5der','images/look/sp5der-pink.webp','Sp5der pink set',/sp5der/i,/sp5der.*(pink|hoodie|set)/i],
  ['Sp5der','images/look/sp5der.webp','Sp5der tracksuit',/sp5der/i,/sp5der.*(track|hoodie|sweat|set|pant)/i],
+ ['Sp5der','images/look/sp5der-blue.webp','Sp5der blue hoodie',/sp5der/i,/sp5der.*(blue|hoodie)/i],
  ['Hellstar','images/look/hellstar.webp','Hellstar hoodie & sweatpants',/hellstar/i,/hellstar.*(hoodie|sweat|set|pant)/i],
  ['Corteiz','images/look/corteiz-3.webp','Guerillaz camo field jacket',/corteiz|crtz/i,/corteiz.*(jacket|camo|cargo)/i],
  ['Gallery Dept','images/look/gallerydept.webp','Gallery Dept paint logo hoodie',/gallery ?dept/i,/gallery.*(hoodie|sweat)/i],
@@ -68,7 +72,7 @@ function buildLooks(){const s=$('#looks');let cur=0,timer;
  LOOKS.forEach((L,i)=>{const [brand,img,cap,rx,prx]=L;const all=match(rx);const p=all.find(x=>prx.test(x[1])&&x[5]!=null)||all.find(x=>x[5]!=null)||all[0];if(!p)return;
   const el=document.createElement('div');el.className='look';
   el.innerHTML='<div class="ph"><img src="'+img+'" loading="'+(i?'lazy':'eager')+'" alt="'+brand+'"><span class="tag">'+brand+'</span><div class="cap">'+cap+'<small>'+all.length+' '+brand.toUpperCase()+' LISTINGS IN THE INDEX</small></div></div>'+
-   '<div class="pd"><div class="pim"><img src="images/'+p[0]+'_0.webp" loading="lazy" alt=""></div><div class="pn">'+p[1]+'</div>'+(p[5]!=null?'<div class="pp">'+(p[6]!=null?'from ':'')+'€'+p[5].toFixed(2)+'<small>INCL. VAT</small></div>':'')+(p[3]?'<div class="szl">Sizes '+p[3]+'</div>':'')+
+   '<div class="pd"><div class="pim"><img src="images/'+p[0]+'_0.webp" loading="lazy" alt=""></div><div class="pn">'+p[1]+'</div>'+(p[5]!=null?'<div class="lprice">'+(p[6]!=null?'from ':'')+'€'+p[5].toFixed(2)+'<small>INCL. VAT</small></div>':'')+(p[3]?'<div class="szl">Sizes '+p[3]+'</div>':'')+
    '<div class="btns"><a href="product/'+p[0]+'.html">View item →</a><button>All '+brand+'</button></div></div>';
   el.querySelector('button').onclick=()=>setPreset(brand,rx);s.appendChild(el)});
  const n=s.children.length;const go=i=>{cur=(i+n)%n;s.style.transform='translateX(-'+cur*100+'%)'};const restart=()=>{clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)go(cur+1)},7000)};
