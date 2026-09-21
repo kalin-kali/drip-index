@@ -65,9 +65,14 @@ function minPrice(l){let m=Infinity;for(const i of l)if(i[5]!=null&&i[5]<m)m=i[5
 function setPreset(name,rx){preset={name,rx};tab=-1;query='';q.value='';markCats();render(true)}
 function markCats(){document.querySelectorAll('.cat').forEach((e,j)=>e.classList.toggle('on',(j-1)===tab||(tab===-1&&j===0)))}
 
+const CAT_IMG={'-1':'models/jordan4','0':'models/dior','1':'7786621462_0','2':'7801942513_0','3':'models/balenciaga','4':'7630184358_0','5':'7629518828_0','6':'7629528692_0','7':'7630296264_0','8':'7630272600_0','9':'7821232575_0','10':'7710970001_0'};
+const CAT_HUE=[14,262,340,200,32,150,48,290,180,220,95,120];
+const CAT_LABEL={'Selected':'Selected','Trending Now':'Trending','Latest Finds':'New in','Shoes':'Sneakers','T-Shirt And Shorts':'Tees & Shorts','Hoodies And Pants':'Hoodies & Pants','Coats And Jackets':'Jackets','Accessories':'Accessories','Electronic Products':'Tech','Trendy Brands':'Trendy brands','2026 Fifa World Cup':'World Cup kits'};
 function buildCats(){cats.innerHTML='';cats.appendChild(btn(-1,'All',D.items.length));
- D.tabs.forEach((t,i)=>{const n=D.items.filter(x=>x[2].includes(i)).length;if(n)cats.appendChild(btn(i,t,n))});}
-function btn(i,name,n){const b=document.createElement('button');b.className='cat'+(i===tab?' on':'');b.innerHTML=name+'<span class="n">'+n+'</span>';b.onclick=()=>{tab=i;preset=null;render(true);markCats()};return b}
+ D.tabs.forEach((t,i)=>{const n=D.items.filter(x=>x[2].includes(i)).length;if(n)cats.appendChild(btn(i,t,n))});carousel(cats,5000);}
+function btn(i,name,n){const b=document.createElement('button');b.className='cat'+(i===tab?' on':'');b.style.setProperty('--h',CAT_HUE[i+1]);
+ const im=CAT_IMG[i]||(D.items.find(x=>x[2][0]===i)||[''])[0]+'_0';
+ b.innerHTML='<span class="ci"><img src="images/'+im+'.webp" loading="lazy" alt=""></span><span class="ct"><b>'+(CAT_LABEL[name]||name)+'</b><span class="n">'+n.toLocaleString()+' items</span></span>';b.onclick=()=>{tab=i;preset=null;render(true);markCats()};return b}
 
 function buildHero(){const s=$('#slides'),dots=$('#dots');let cur=0,timer;
  HERO.forEach((h,i)=>{const l=match(h.rx),mp=minPrice(l.filter(x=>x[2].includes(3)||SHOE.test(x[1])));const el=document.createElement('div');el.className='slide';
@@ -96,7 +101,7 @@ function buildTiles(){const m=$('#models'),b=$('#brands');
   t.innerHTML='<div class="bi"><img src="'+im+'" loading="lazy" alt=""></div><div class="bt">'+name+'<small>'+l.length+'</small></div>';t.onclick=()=>setPreset(name,rx);b.appendChild(t)});
  carousel(m,4500);carousel(b,3500);}
 function carousel(row,every){const wrap=row.parentElement;if(!wrap.classList.contains('carousel'))return;
- const step=()=>row.firstElementChild?row.firstElementChild.getBoundingClientRect().width+10:200;
+ const step=()=>row.firstElementChild?row.firstElementChild.getBoundingClientRect().width+(parseFloat(getComputedStyle(row).columnGap)||10):200;
  const go=d=>{const max=row.scrollWidth-row.clientWidth;let x=row.scrollLeft+d*step()*2;if(d>0&&row.scrollLeft>=max-4)x=0;if(d<0&&row.scrollLeft<=4)x=max;row.scrollTo({left:x,behavior:'smooth'})};
  wrap.querySelector('.arr.l').onclick=()=>{go(-1);arm()};wrap.querySelector('.arr.r').onclick=()=>{go(1);arm()};
  let t;const arm=()=>{clearInterval(t);t=setInterval(()=>{if(!document.hidden&&!wrap.matches(':hover'))go(1)},every)};arm();}
