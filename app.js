@@ -27,17 +27,28 @@ const BRANDS=[['Essentials',/essentials|fear of god|\bfog\b/i],['Corteiz',/corte
  ['Carhartt',/carhartt/i],['Nike',/\bnike\b/i],['Goyard',/goyard/i],['Louis Vuitton',/\blv\b|louis vuitton/i],['Gucci',/gucci/i],['Prada',/prada/i],['Dior',/dior/i],['Football kits',/jersey|\bkit\b|world cup/i]];
 const LOOKS=[ // [brand, image, caption, brand regex, product-pick regex]
  ['Corteiz','images/look/corteiz-2.webp','Pista velour tracksuit',/corteiz|crtz/i,/corteiz.*(track|jacket|set|suit)/i],
- ['Essentials','images/look/essentials.webp','Fear of God Essentials hoodie',/essentials|fear of god|\bfog\b/i,/essentials.*hoodie|fog.*hoodie/i],
  ['Sp5der','images/look/sp5der-purple.webp','Sp5der web tracksuit',/sp5der/i,/sp5der.*(track|hoodie|sweat|set|pant)/i],
+ ['Louis Vuitton','images/look/lv-naomi.webp','LV monogram look',/\blv\b|louis vuitton/i,/(\blv\b|louis vuitton).*(jacket|shirt|hoodie|tee|set)/i],
+ ['Moncler','images/look/moncler-puffer.webp','Moncler down jacket',/moncler/i,/moncler.*(down|puffer|jacket)/i],
+ ['Trapstar','images/look/trapstar-duo.webp','Trapstar tracksuits',/trapstar/i,/trapstar.*(hoodie|sweat|track|set|suit)/i],
+ ['Stone Island','images/look/stoneisland-orange.webp','Stone Island shell jacket',/stone island/i,/stone island.*(jacket|coat|wind|shell|overshirt)/i],
  ['Balenciaga','images/look/balenciaga-track.webp','Balenciaga Track',/balenciaga/i,/balenciaga.*track/i],
+ ['Essentials','images/look/essentials.webp','Fear of God Essentials hoodie',/essentials|fear of god|\bfog\b/i,/essentials.*hoodie|fog.*hoodie/i],
+ ['Louis Vuitton','images/look/lv-bags.webp','LV monogram bags',/\blv\b|louis vuitton/i,/(\blv\b|louis vuitton).*(bag|keepall|speedy|neverfull|backpack)/i],
  ['Sp5der','images/look/sp5der-pink.webp','Sp5der pink set',/sp5der/i,/sp5der.*(pink|hoodie|set)/i],
- ['Sp5der','images/look/sp5der.webp','Sp5der tracksuit',/sp5der/i,/sp5der.*(track|hoodie|sweat|set|pant)/i],
- ['Sp5der','images/look/sp5der-blue.webp','Sp5der blue hoodie',/sp5der/i,/sp5der.*(blue|hoodie)/i],
+ ['Moncler','images/look/moncler-maya.webp','Moncler Maya 70 reflective',/moncler/i,/moncler.*(maya|down|puffer)/i],
  ['Hellstar','images/look/hellstar.webp','Hellstar hoodie & sweatpants',/hellstar/i,/hellstar.*(hoodie|sweat|set|pant)/i],
+ ['Stone Island','images/look/stoneisland-bomber.webp','Stone Island bomber',/stone island/i,/stone island.*(bomber|jacket)/i],
+ ['Trapstar','images/look/trapstar-hoodie.webp','Trapstar hoodie',/trapstar/i,/trapstar.*(hoodie|sweat)/i],
+ ['Louis Vuitton','images/look/lv-runway.webp','LV runway monogram',/\blv\b|louis vuitton/i,/(\blv\b|louis vuitton).*(jacket|shirt|hoodie|tee|set|bag)/i],
  ['Corteiz','images/look/corteiz-3.webp','Guerillaz camo field jacket',/corteiz|crtz/i,/corteiz.*(jacket|camo|cargo)/i],
+ ['Moncler','images/look/moncler-palm.webp','Moncler x Palm Angels',/moncler/i,/moncler.*palm|palm angels/i],
  ['Gallery Dept','images/look/gallerydept.webp','Gallery Dept paint logo hoodie',/gallery ?dept/i,/gallery.*(hoodie|sweat)/i],
+ ['Sp5der','images/look/sp5der-blue.webp','Sp5der blue hoodie',/sp5der/i,/sp5der.*(blue|hoodie)/i],
+ ['Stone Island','images/look/stoneisland-navy.webp','Stone Island jacket',/stone island/i,/stone island.*(jacket|coat)/i],
  ['Amiri','images/look/amiri.webp','Amiri oversized tee',/amiri/i,/amiri.*(tee|t-?shirt)/i],
  ['Stussy','images/look/stussy.webp','Stussy hooded puffer',/stussy|stüssy/i,/stussy.*(puffer|jacket|down)/i],
+ ['Sp5der','images/look/sp5der.webp','Sp5der tracksuit',/sp5der/i,/sp5der.*(track|hoodie|sweat|set|pant)/i],
  ['Corteiz','images/look/corteiz-1.webp','Corteiz sweats',/corteiz|crtz/i,/corteiz.*(sweat|hood|pant)/i],
 ];
 const ROWS=[[1,'Trending now'],[2,'Latest finds'],[3,'Sneakers'],[10,'2026 World Cup kits']];
@@ -68,8 +79,8 @@ function buildHero(){const s=$('#slides'),dots=$('#dots');let cur=0,timer;
  go(0);restart();
  let x0=null;s.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});s.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){go(cur+(dx<0?1:-1));restart()}x0=null});}
 
-function buildLooks(){const s=$('#looks');let cur=0,timer;
- LOOKS.forEach((L,i)=>{const [brand,img,cap,rx,prx]=L;const all=match(rx);const p=all.find(x=>prx.test(x[1])&&x[5]!=null)||all.find(x=>x[5]!=null)||all[0];if(!p)return;
+function buildLooks(){const s=$('#looks');let cur=0,timer;const usedP=new Set();
+ LOOKS.forEach((L,i)=>{const [brand,img,cap,rx,prx]=L;const all=match(rx);const fresh=f=>all.find(x=>f(x)&&!usedP.has(x[0]));const p=fresh(x=>prx.test(x[1])&&x[5]!=null)||fresh(x=>x[5]!=null)||all.find(x=>prx.test(x[1])&&x[5]!=null)||all[0];if(!p)return;usedP.add(p[0]);
   const el=document.createElement('div');el.className='look';
   el.innerHTML='<div class="ph"><img class="bg" src="'+img+'" loading="'+(i?'lazy':'eager')+'" alt="" aria-hidden="true"><img class="fg" src="'+img+'" loading="'+(i?'lazy':'eager')+'" alt="'+brand+'"><span class="tag">'+brand+'</span><div class="cap">'+cap+'<small>'+all.length+' '+brand.toUpperCase()+' LISTINGS IN THE INDEX</small></div></div>'+
    '<div class="pd"><div class="pim"><img src="images/'+p[0]+'_0.webp" loading="lazy" alt=""></div><div class="pn">'+p[1]+'</div>'+(p[5]!=null?'<div class="lprice">'+(p[6]!=null?'from ':'')+'€'+p[5].toFixed(2)+'<small>INCL. VAT</small></div>':'')+(p[3]?'<div class="szl">Sizes '+p[3]+'</div>':'')+
