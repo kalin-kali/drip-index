@@ -71,7 +71,7 @@ function buildHero(){const s=$('#slides'),dots=$('#dots');let cur=0,timer;
 function buildLooks(){const s=$('#looks');let cur=0,timer;
  LOOKS.forEach((L,i)=>{const [brand,img,cap,rx,prx]=L;const all=match(rx);const p=all.find(x=>prx.test(x[1])&&x[5]!=null)||all.find(x=>x[5]!=null)||all[0];if(!p)return;
   const el=document.createElement('div');el.className='look';
-  el.innerHTML='<div class="ph"><img src="'+img+'" loading="'+(i?'lazy':'eager')+'" alt="'+brand+'"><span class="tag">'+brand+'</span><div class="cap">'+cap+'<small>'+all.length+' '+brand.toUpperCase()+' LISTINGS IN THE INDEX</small></div></div>'+
+  el.innerHTML='<div class="ph"><img class="bg" src="'+img+'" loading="'+(i?'lazy':'eager')+'" alt="" aria-hidden="true"><img class="fg" src="'+img+'" loading="'+(i?'lazy':'eager')+'" alt="'+brand+'"><span class="tag">'+brand+'</span><div class="cap">'+cap+'<small>'+all.length+' '+brand.toUpperCase()+' LISTINGS IN THE INDEX</small></div></div>'+
    '<div class="pd"><div class="pim"><img src="images/'+p[0]+'_0.webp" loading="lazy" alt=""></div><div class="pn">'+p[1]+'</div>'+(p[5]!=null?'<div class="lprice">'+(p[6]!=null?'from ':'')+'€'+p[5].toFixed(2)+'<small>INCL. VAT</small></div>':'')+(p[3]?'<div class="szl">Sizes '+p[3]+'</div>':'')+
    '<div class="btns"><a href="product/'+p[0]+'.html">View item →</a><button>All '+brand+'</button></div></div>';
   el.querySelector('button').onclick=()=>setPreset(brand,rx);s.appendChild(el)});
