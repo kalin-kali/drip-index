@@ -25,9 +25,19 @@ const BRANDS=[['Essentials',/essentials|fear of god|\bfog\b/i],['Corteiz',/corte
  ['Stussy',/stussy|stüssy/i],['Hellstar',/hellstar/i],['Gallery Dept',/gallery ?dept/i],['Denim Tears',/denim tears/i],['Sp5der',/sp5der/i],['Bape',/\bbape\b/i],
  ['Supreme',/supreme/i],['Moncler',/moncler/i],['Stone Island',/stone island/i],['The North Face',/north ?face|\btnf\b/i],['Ralph Lauren',/ralph lauren|\bpolo\b/i],
  ['Carhartt',/carhartt/i],['Nike',/\bnike\b/i],['Goyard',/goyard/i],['Louis Vuitton',/\blv\b|louis vuitton/i],['Gucci',/gucci/i],['Prada',/prada/i],['Dior',/dior/i],['Football kits',/jersey|\bkit\b|world cup/i]];
+const LOOKS=[ // [brand, image, caption, brand regex, product-pick regex]
+ ['Corteiz','images/look/corteiz-2.webp','Pista velour tracksuit',/corteiz|crtz/i,/corteiz.*(track|jacket|set|suit)/i],
+ ['Essentials','images/look/essentials.webp','Fear of God Essentials hoodie',/essentials|fear of god|\bfog\b/i,/essentials.*hoodie|fog.*hoodie/i],
+ ['Hellstar','images/look/hellstar.webp','Hellstar hoodie & sweatpants',/hellstar/i,/hellstar.*(hoodie|sweat|set|pant)/i],
+ ['Corteiz','images/look/corteiz-3.webp','Guerillaz camo field jacket',/corteiz|crtz/i,/corteiz.*(jacket|camo|cargo)/i],
+ ['Gallery Dept','images/look/gallerydept.webp','Gallery Dept paint logo hoodie',/gallery ?dept/i,/gallery.*(hoodie|sweat)/i],
+ ['Amiri','images/look/amiri.webp','Amiri oversized tee',/amiri/i,/amiri.*(tee|t-?shirt)/i],
+ ['Stussy','images/look/stussy.webp','Stussy hooded puffer',/stussy|stüssy/i,/stussy.*(puffer|jacket|down)/i],
+ ['Corteiz','images/look/corteiz-1.webp','Corteiz sweats',/corteiz|crtz/i,/corteiz.*(sweat|hood|pant)/i],
+];
 const ROWS=[[1,'Trending now'],[2,'Latest finds'],[3,'Sneakers'],[10,'2026 World Cup kits']];
 
-fetch('data.json').then(r=>r.json()).then(d=>{D=d;buildCats();buildHero();buildTiles();buildRows();wireNav();applyURL()});
+fetch('data.json').then(r=>r.json()).then(d=>{D=d;buildCats();buildHero();buildLooks();buildTiles();buildRows();wireNav();applyURL()});
 function applyURL(){const u=new URLSearchParams(location.search);const t=u.get('tab'),c=u.get('c'),qq=u.get('q');
  if(c){const b=BRANDS.concat(MODELS.map(m=>[m[0],m[1]])).find(x=>x[0].toLowerCase()===c.toLowerCase());if(b){setPreset(b[0],b[1]);return}}
  if(t!=null&&D.tabs[+t]){tab=+t;markCats();render(true);return}
@@ -53,6 +63,16 @@ function buildHero(){const s=$('#slides'),dots=$('#dots');let cur=0,timer;
  go(0);restart();
  let x0=null;s.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});s.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){go(cur+(dx<0?1:-1));restart()}x0=null});}
 
+function buildLooks(){const s=$('#looks');let cur=0,timer;
+ LOOKS.forEach((L,i)=>{const [brand,img,cap,rx,prx]=L;const all=match(rx);const p=all.find(x=>prx.test(x[1])&&x[5]!=null)||all.find(x=>x[5]!=null)||all[0];if(!p)return;
+  const el=document.createElement('div');el.className='look';
+  el.innerHTML='<div class="ph"><img src="'+img+'" loading="'+(i?'lazy':'eager')+'" alt="'+brand+'"><span class="tag">'+brand+'</span><div class="cap">'+cap+'<small>'+all.length+' '+brand.toUpperCase()+' LISTINGS IN THE INDEX</small></div></div>'+
+   '<div class="pd"><div class="pim"><img src="images/'+p[0]+'_0.webp" loading="lazy" alt=""></div><div class="pn">'+p[1]+'</div>'+(p[5]!=null?'<div class="pp">'+(p[6]!=null?'from ':'')+'€'+p[5].toFixed(2)+'<small>INCL. VAT</small></div>':'')+(p[3]?'<div class="szl">Sizes '+p[3]+'</div>':'')+
+   '<div class="btns"><a href="product/'+p[0]+'.html">View item →</a><button>All '+brand+'</button></div></div>';
+  el.querySelector('button').onclick=()=>setPreset(brand,rx);s.appendChild(el)});
+ const n=s.children.length;const go=i=>{cur=(i+n)%n;s.style.transform='translateX(-'+cur*100+'%)'};const restart=()=>{clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)go(cur+1)},7000)};
+ $('#lkl').onclick=()=>{go(cur-1);restart()};$('#lkr').onclick=()=>{go(cur+1);restart()};go(0);restart();
+ let x0=null;s.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});s.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){go(cur+(dx<0?1:-1));restart()}x0=null});}
 function buildTiles(){const m=$('#models'),b=$('#brands');
  MODELS.forEach(([name,rx,img])=>{const l=match(rx);if(!l.length)return;const im=img?'images/models/'+img+'.webp':'images/'+l[0][0]+'_0.webp';
   const t=document.createElement('button');t.className='tile';t.innerHTML='<div class="ti"><img src="'+im+'" loading="lazy" alt=""></div><div class="tt"><b>'+name+'</b><span>'+l.length+'</span></div>';t.onclick=()=>setPreset(name,rx);m.appendChild(t)});

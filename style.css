@@ -181,3 +181,32 @@ footer .fgrid a{display:block;font-size:13px;color:var(--mute);padding:3px 0;cur
 footer .fgrid a:hover{color:var(--acc)}
 .fbot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:30px;padding-top:16px;font-size:11px;letter-spacing:.05em;text-transform:uppercase}
 .card .badge{position:absolute;top:8px;right:8px;font-size:9px;letter-spacing:.08em;background:var(--acc);color:#fff;padding:3px 6px}
+
+/* lookbook */
+.looks{position:relative;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+.lookslides{display:flex;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.look{flex:0 0 100%;display:grid;grid-template-columns:1fr;min-height:420px}
+@media(min-width:800px){.look{grid-template-columns:1.15fr .85fr;min-height:560px}}
+.look .ph{position:relative;background:#111;overflow:hidden;min-height:380px}
+.look .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform 6s linear}
+.look:hover .ph img{transform:scale(1.05)}
+.look .ph .tag{position:absolute;left:16px;top:16px;background:var(--acc);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px}
+.look .ph .cap{position:absolute;left:16px;bottom:16px;right:16px;color:#fff;font-family:"Archivo",sans-serif;font-weight:800;font-size:clamp(26px,3.6vw,46px);letter-spacing:-.04em;line-height:.95;text-transform:uppercase;text-shadow:0 4px 30px rgba(0,0,0,.6)}
+.look .ph .cap small{display:block;font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:11px;letter-spacing:.12em;margin-top:8px;opacity:.85}
+.look .pd{display:flex;flex-direction:column;justify-content:center;gap:12px;padding:22px}
+@media(min-width:800px){.look .pd{padding:34px 40px}}
+.look .pd .pim{aspect-ratio:1;width:min(100%,300px);background:var(--imbg);overflow:hidden}
+.look .pd .pim img{width:100%;height:100%;object-fit:cover}
+.look .pd .pn{font-weight:700;font-size:17px;letter-spacing:-.01em}
+.look .pd .pp{font-family:"Archivo",sans-serif;font-weight:800;font-size:24px;color:var(--acc);display:flex;align-items:baseline}
+.look .pd .pp small{font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:10px;color:var(--mute);margin-left:8px;letter-spacing:.08em}
+.look .pd .szl{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--mute);letter-spacing:.06em;text-transform:uppercase}
+.look .pd .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.look .pd .btns a,.look .pd .btns button{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:12px 16px;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:var(--paper)}
+.look .pd .btns button{background:none;color:var(--ink)}
+.look .pd .btns a:hover,.look .pd .btns button:hover{border-color:var(--acc);background:var(--acc);color:#fff}
+.looks .arr{position:absolute;top:40%;z-index:3;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.45);color:#fff;cursor:pointer;font-size:16px;display:grid;place-items:center}
+.looks .arr.l{left:12px}.looks .arr.r{left:auto;right:auto}
+@media(min-width:800px){.looks .arr.r{left:calc(57.5% - 50px)}}
+@media(max-width:799px){.looks .arr.r{right:12px}}
+.looks .dots{left:16px;right:auto;bottom:auto;top:12px;display:none}
