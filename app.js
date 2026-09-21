@@ -6,18 +6,21 @@ const grid=$('#grid'),cats=$('#cats'),q=$('#q'),srow=$('#srow'),more=$('#more'),
 /* ---- storefront config: hero slides, model tiles, brand chips, rows ---- */
 const SHOE=/track|runner|triple|3xl|shoe|sneaker|trainer|jordan \d|dunk|yeezy \d|350|700|500|foam|balance|\bnb ?\d|\d{3,4}r?\b/i;
 const HERO=[
- {kick:'Sneakers',title:'Balenciaga',rx:/balenciaga/i,img:'images/7628942472_4.webp'},
- {kick:'Sneakers',title:'Jordan',rx:/jordan/i,img:'images/7625932871_0.webp'},
- {kick:'Sneakers',title:'Yeezy',rx:/yeezy/i,img:'images/7628851042_0.webp'},
- {kick:'Sneakers',title:'New Balance',rx:/new balance|\bnb ?\d/i,img:'images/7818915075_0.webp'},
+ {kick:'Sneakers',title:'Balenciaga',rx:/balenciaga/i,img:'images/hero/balenciaga.webp'},
+ {kick:'Sneakers',title:'Jordan 4',rx:/jordan 4|aj4|\bj4\b/i,img:'images/hero/jordan4.webp'},
+ {kick:'Sneakers',title:'Yeezy',rx:/yeezy/i,img:'images/hero/yeezy.webp'},
+ {kick:'Sneakers',title:'New Balance',rx:/new balance|\bnb ?\d/i,img:'images/hero/nb.webp'},
+ {kick:'Sneakers',title:'Nike Dunk',rx:/dunk/i,img:'images/hero/dunk.webp'},
+ {kick:'Sneakers',title:'Jordan 1',rx:/jordan 1|aj1/i,img:'images/hero/jordan1.webp'},
 ];
-const MODELS=[
- ['Jordan 4',/jordan 4|aj4|\bj4\b/i,'7625932871_0'],['Jordan 1',/jordan 1|aj1/i,'7628916574_0'],['Nike Dunk',/dunk/i,'7631507436_1'],
- ['Yeezy',/yeezy/i,'7628851042_0'],['Balenciaga',/balenciaga/i,'7628942472_1'],['New Balance',/new balance|\bnb ?\d/i,'7818915075_0'],
- ['Air Max / TN',/air max|\btn\b|vapormax/i,'7629003734_0'],['Air Force 1',/air force|af1/i,'7625956475_0'],['Adidas Samba',/samba|gazelle|spezial|campus/i,'7821942974_1'],
- ['Dior B22 / B30',/dior.*(b22|b30)/i,'7819000905_2'],['LV Trainer',/(\blv\b|louis vuitton).*(trainer|skate|shoe|sneaker)/i,'7819056651_0'],['Louboutin',/louboutin/i,'7822046782_1'],
- ['Golden Goose',/golden goose/i,null],['Slides',/slide|slipper|sliper|clog|crocs|birkenstock/i,null],
+const MODELS=[ // [name, regex, images/models/<key>.webp]
+ ['Jordan 4',/jordan 4|aj4|\bj4\b/i,'jordan4'],['Jordan 1',/jordan 1|aj1/i,'jordan1'],['Nike Dunk',/dunk/i,'dunk'],
+ ['Yeezy 350',/yeezy/i,'yeezy'],['Balenciaga Track',/balenciaga/i,'balenciaga'],['New Balance',/new balance|\bnb ?\d/i,'nb'],
+ ['Air Max / TN',/air max|\btn\b|vapormax/i,'airmax'],['Air Force 1',/air force|af1/i,'af1'],['Adidas Samba',/samba|gazelle|spezial|campus/i,'samba'],
+ ['Dior B22 / B30',/dior.*(b22|b30)/i,'dior'],['LV Trainer',/(\blv\b|louis vuitton).*(trainer|skate|shoe|sneaker)/i,'lv'],['Louboutin',/louboutin/i,'louboutin'],
+ ['Golden Goose',/golden goose/i,'goldengoose'],['Yeezy Slides',/yeezy.*(slide|foam)|foam runner/i,'yeezy-slide'],['Triple S',/triple s/i,'balenciaga-triples'],
 ];
+const BRAND_IMG={}; // brand name -> images/brands/<file> (drop logo files here later)
 const BRANDS=[['Essentials',/essentials|fear of god|\bfog\b/i],['Corteiz',/corteiz|crtz/i],['Trapstar',/trapstar/i],['Amiri',/amiri/i],['Chrome Hearts',/chrome ?hearts/i],
  ['Stussy',/stussy|stüssy/i],['Hellstar',/hellstar/i],['Gallery Dept',/gallery ?dept/i],['Denim Tears',/denim tears/i],['Sp5der',/sp5der/i],['Bape',/\bbape\b/i],
  ['Supreme',/supreme/i],['Moncler',/moncler/i],['Stone Island',/stone island/i],['The North Face',/north ?face|\btnf\b/i],['Ralph Lauren',/ralph lauren|\bpolo\b/i],
@@ -51,10 +54,16 @@ function buildHero(){const s=$('#slides'),dots=$('#dots');let cur=0,timer;
  let x0=null;s.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});s.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){go(cur+(dx<0?1:-1));restart()}x0=null});}
 
 function buildTiles(){const m=$('#models'),b=$('#brands');
- MODELS.forEach(([name,rx,img])=>{const l=match(rx);if(!l.length)return;const im=img?'images/'+img+'.webp':'images/'+l[0][0]+'_0.webp';
-  const t=document.createElement('button');t.className='tile';t.innerHTML='<img src="'+im+'" loading="lazy" alt=""><div><b>'+name+'</b><span>'+l.length+' LISTINGS</span></div>';t.onclick=()=>setPreset(name,rx);m.appendChild(t)});
- BRANDS.forEach(([name,rx])=>{const l=match(rx);if(!l.length)return;const t=document.createElement('button');t.className='bchip';
-  t.innerHTML='<img src="images/'+l[0][0]+'_0.webp" loading="lazy" alt="">'+name+'<small>'+l.length+'</small>';t.onclick=()=>setPreset(name,rx);b.appendChild(t)});}
+ MODELS.forEach(([name,rx,img])=>{const l=match(rx);if(!l.length)return;const im=img?'images/models/'+img+'.webp':'images/'+l[0][0]+'_0.webp';
+  const t=document.createElement('button');t.className='tile';t.innerHTML='<div class="ti"><img src="'+im+'" loading="lazy" alt=""></div><div class="tt"><b>'+name+'</b><span>'+l.length+'</span></div>';t.onclick=()=>setPreset(name,rx);m.appendChild(t)});
+ BRANDS.forEach(([name,rx])=>{const l=match(rx);if(!l.length)return;const t=document.createElement('button');t.className='bchip';const im=BRAND_IMG[name]?'images/brands/'+BRAND_IMG[name]:'images/'+l[0][0]+'_0.webp';
+  t.innerHTML='<div class="bi"><img src="'+im+'" loading="lazy" alt=""></div><div class="bt">'+name+'<small>'+l.length+'</small></div>';t.onclick=()=>setPreset(name,rx);b.appendChild(t)});
+ carousel(m,4500);carousel(b,3500);}
+function carousel(row,every){const wrap=row.parentElement;if(!wrap.classList.contains('carousel'))return;
+ const step=()=>row.firstElementChild?row.firstElementChild.getBoundingClientRect().width+10:200;
+ const go=d=>{const max=row.scrollWidth-row.clientWidth;let x=row.scrollLeft+d*step()*2;if(d>0&&row.scrollLeft>=max-4)x=0;if(d<0&&row.scrollLeft<=4)x=max;row.scrollTo({left:x,behavior:'smooth'})};
+ wrap.querySelector('.arr.l').onclick=()=>{go(-1);arm()};wrap.querySelector('.arr.r').onclick=()=>{go(1);arm()};
+ let t;const arm=()=>{clearInterval(t);t=setInterval(()=>{if(!document.hidden&&!wrap.matches(':hover'))go(1)},every)};arm();}
 
 function buildRows(){const wrap=$('#rows');
  const used=new Set();ROWS.forEach(([ti,title])=>{const l=D.items.filter(i=>i[2][0]===ti&&i[5]!=null&&!used.has(i[0])).slice(0,14);l.forEach(i=>used.add(i[0]));if(!l.length)return;
