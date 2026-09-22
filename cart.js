@@ -2,13 +2,17 @@
    Works on both the homepage and the static product pages; no build step, no dependencies.
    Contact channels for orders: fill these in and the buttons appear. */
 const CONTACTS = {
-  instagram: '',      // e.g. 'dripindex.bg'      -> instagram.com/<handle>
-  telegram : '',      // e.g. 'dripindex'         -> t.me/<handle>
-  whatsapp : '',      // e.g. '359888123456'      -> wa.me/<number>
-  email    : '',      // e.g. 'orders@dripindex.eu'
+  phone    : '0884 708 691',          // tel: link, dialled as +359 884 708 691
+  phone2   : '0887 081 684',
+  whatsapp : '0898 481 925',          // wa.me/359898481925
+  email    : 'dripindex2@gmail.com',
+  instagram: '',                      // 'handle' -> instagram.com/<handle>
+  telegram : '',                      // 'handle' -> t.me/<handle>
   hours    : 'Mon–Sat · 10:00–19:00 EET'
 };
-const ORDER_WHATSAPP = CONTACTS.whatsapp;
+/* Bulgarian mobile numbers are written 08xx… locally but must dial as +3598xx… */
+const intl = v => '+359' + v.replace(/\D/g, '').replace(/^0/, '');
+const ORDER_WHATSAPP = CONTACTS.whatsapp ? intl(CONTACTS.whatsapp).replace('+', '') : '';
 const ORDER_EMAIL    = CONTACTS.email;
 (function(){
 const KEY = 'drip.cart.v1';
@@ -92,16 +96,22 @@ function addToCart(item) {
 })();
 
 /* ---------- support widget (floating) + footer contacts ---------- */
+const PHONE_ICON = '<path d="M4.5 4h3.2l1.6 4-2 1.4a12 12 0 0 0 5.3 5.3l1.4-2 4 1.6v3.2a1.5 1.5 0 0 1-1.7 1.5C9.6 18.6 5.4 14.4 3 6.2A1.5 1.5 0 0 1 4.5 4Z"/>';
 const CH = [
+  { k: 'phone', label: 'Call us', href: v => 'tel:' + intl(v), icon: PHONE_ICON },
+  { k: 'phone2', label: 'Call us', href: v => 'tel:' + intl(v), icon: PHONE_ICON },
   { k: 'instagram', label: 'Instagram', href: v => 'https://instagram.com/' + v.replace(/^@/, ''), icon: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>' },
   { k: 'telegram', label: 'Telegram', href: v => 'https://t.me/' + v.replace(/^@/, ''), icon: '<path d="M21 4 3 11l5 2 2 6 3-4 5 4Z"/>' },
-  { k: 'whatsapp', label: 'WhatsApp', href: v => 'https://wa.me/' + v.replace(/\D/g, ''), icon: '<path d="M4 20l1.3-4A8 8 0 1 1 8 18.7Z"/>' },
+  { k: 'whatsapp', label: 'WhatsApp', href: v => 'https://wa.me/' + intl(v).replace('+', ''), icon: '<path d="M4 20l1.3-4A8 8 0 1 1 8 18.7Z"/>' },
   { k: 'email', label: 'Email', href: v => 'mailto:' + v, icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>' }
 ];
 const channels = () => CH.filter(c => CONTACTS[c.k]).map(c => ({ ...c, url: c.href(CONTACTS[c.k]), value: CONTACTS[c.k] }));
 function supportMarkup() {
   const list = channels();
   if (!list.length) return '<div class="nolink mono">Contact channels coming soon</div>';
+  /* two numbers, one label — only the first says "Call us" */
+  let calls = 0;
+  list.forEach(c => { if (c.k.startsWith('phone') && calls++) c.label = 'Or call' });
   return list.map(c => `<a class="sup" href="${c.url}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true">${c.icon}</svg><span><b>${c.label}</b><i>${c.value}</i></span></a>`).join('');
 }
 (function support() {
