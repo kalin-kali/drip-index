@@ -58,7 +58,7 @@ const LOOKS=[ // [brand, image, caption, brand regex, product-pick regex]
 ];
 const ROWS=[[1,'Trending now'],[2,'Latest finds'],[3,'Sneakers'],[10,'2026 World Cup kits']];
 
-fetch('data.json').then(r=>r.json()).then(d=>{D=d;const sk=$('#sk');if(sk)sk.remove();buildCats();buildHero();buildLooks();buildTiles();buildRows();wireNav();applyURL();revealAll()});
+fetch('data.json').then(r=>r.json()).then(d=>{D=d;const sk=$('#sk');if(sk)sk.remove();buildCats();buildHero();buildMarquee();buildLooks();buildTiles();buildRows();wireNav();applyURL();revealAll()});
 function applyURL(){const u=new URLSearchParams(location.search);const t=u.get('tab'),c=u.get('c'),qq=u.get('q');
  if(c){const b=BRANDS.concat(MODELS.map(m=>[m[0],m[1]])).find(x=>x[0].toLowerCase()===c.toLowerCase());if(b){setPreset(b[0],b[1]);return}}
  if(t!=null&&D.tabs[+t]){tab=+t;markCats();render(true);return}
@@ -89,6 +89,10 @@ function buildHero(){const s=$('#slides'),dots=$('#dots');let cur=0,timer;
  go(0);restart();
  let x0=null;s.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});s.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){go(cur+(dx<0?1:-1));restart()}x0=null});}
 
+function buildMarquee(){const t=$('#mtrack');if(!t)return;
+ const use=BRANDS.filter(([n])=>BRAND_IMG[n]).slice(0,18);
+ t.innerHTML=use.map(([n,rx])=>'<button class="mb" type="button" data-b="'+n+'"><img src="images/brands/'+BRAND_IMG[n]+'" loading="lazy" alt=""><span>'+n+'</span></button>').join('');
+ t.querySelectorAll('.mb').forEach(b=>{const e=BRANDS.find(x=>x[0]===b.dataset.b);b.onclick=()=>setPreset(e[0],e[1])});}
 function buildLooks(){const s=$('#looks');let cur=0,timer;const usedP=new Set();
  LOOKS.forEach((L,i)=>{const [brand,img,cap,rx,prx]=L;const all=match(rx);const fresh=f=>all.find(x=>f(x)&&!usedP.has(x[0]));const p=fresh(x=>prx.test(x[1])&&x[5]!=null)||fresh(x=>x[5]!=null)||all.find(x=>prx.test(x[1])&&x[5]!=null)||all[0];if(!p)return;usedP.add(p[0]);
   const el=document.createElement('div');el.className='look';

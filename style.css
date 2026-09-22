@@ -312,3 +312,44 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
  .gal .main.anim .wm{animation:wmIn .9s cubic-bezier(.2,.7,.2,1) both}
  @keyframes wmIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 }
+
+/* ===== colour swatches ===== */
+.szh .req{color:var(--acc);font-weight:500}
+.szh .cpick{color:var(--ink);text-transform:none;letter-spacing:0;font-size:11px;margin-left:6px}
+.cols{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.cols.shake{animation:shk .45s}
+.cw{width:54px;height:54px;padding:0;border:1px solid var(--line);background:var(--card);cursor:pointer;overflow:hidden;position:relative;transition:transform .15s,border-color .15s,box-shadow .15s}
+.cw img{width:100%;height:100%;object-fit:cover;display:block}
+.cw .cwt{display:grid;place-items:center;width:100%;height:100%;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--mute);padding:2px;text-align:center;line-height:1.1;overflow:hidden}
+.cw:hover{transform:translateY(-2px);border-color:var(--acc)}
+.cw.on{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc) inset,0 6px 18px rgba(255,77,28,.25)}
+.cw.on::after{content:"✓";position:absolute;right:2px;bottom:1px;font-size:10px;color:#fff;background:var(--acc);padding:0 3px;border-radius:2px}
+/* ===== support: footer column + floating widget ===== */
+.fsupport .sup{display:flex;align-items:center;gap:9px;padding:5px 0}
+.fsupport .sup svg,.suppanel .sup svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;flex:0 0 auto}
+.fsupport .sup b,.suppanel .sup b{display:block;font-size:13px;font-weight:600;color:var(--ink)}
+.fsupport .sup i,.suppanel .sup i{display:block;font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--mute);letter-spacing:.04em}
+.fsupport .sup:hover b{color:var(--acc)}
+.shours{font-size:10px;color:var(--mute);letter-spacing:.06em;text-transform:uppercase;margin-top:10px}
+.nolink{font-size:11px;color:var(--mute);letter-spacing:.05em;text-transform:uppercase;padding:4px 0}
+.supwrap{position:fixed;right:16px;bottom:16px;z-index:39;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.supbtn{display:inline-flex;align-items:center;gap:8px;background:var(--acc);color:#fff;border:0;border-radius:999px;padding:12px 18px;cursor:pointer;font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 10px 30px rgba(255,77,28,.35);transition:transform .15s,filter .15s}
+.supbtn:hover{transform:translateY(-2px);filter:brightness(1.07)}
+.supbtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.suppanel{width:min(300px,calc(100vw - 32px));background:var(--card);border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.35);padding:16px}
+.suppanel.on{animation:riseIn .3s cubic-bezier(.2,.7,.2,1) both}
+.suppanel .sph{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.suppanel .sph b{font-family:"Archivo",sans-serif;font-size:16px;letter-spacing:-.02em}
+.suppanel .spx{background:none;border:0;color:var(--mute);cursor:pointer;font-size:14px}
+.suppanel p{font-size:11px;line-height:1.5;color:var(--mute);margin:0 0 10px;letter-spacing:.02em;text-transform:none}
+.suppanel .sup{display:flex;align-items:center;gap:9px;padding:7px 0;border-top:1px solid var(--line)}
+.suppanel .sup:hover b{color:var(--acc)}
+@media(max-width:700px){.supbtn span{display:none}.supbtn{padding:13px;border-radius:50%}}
+
+/* ===== brand marquee ===== */
+.marquee{overflow:hidden;border:1px solid var(--line);background:var(--card);margin-top:22px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.mtrack{display:flex;gap:10px;padding:12px;width:max-content}
+.mb{display:inline-flex;align-items:center;gap:9px;background:none;border:1px solid var(--line);padding:7px 14px 7px 7px;cursor:pointer;color:var(--ink);font-size:13px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;transition:border-color .15s,transform .15s}
+.mb img{width:30px;height:30px;object-fit:cover;background:#fff}
+.mb:hover{border-color:var(--acc);transform:translateY(-2px)}
+html.has-motion .marquee .mtrack{will-change:transform}
