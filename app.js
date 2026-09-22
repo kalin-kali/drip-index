@@ -1,5 +1,10 @@
 
 let D=null,tab=-1,query='',preset=null,shown=0,list=[];const PAGE=80;
+/* scroll-reveal: stagger within a batch, play once, skipped under prefers-reduced-motion */
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const revealIO=RM?null:new IntersectionObserver((es,o)=>{let n=0;for(const e of es){if(!e.isIntersecting)continue;e.target.style.setProperty('--d',Math.min(n++,7)*60+'ms');e.target.classList.add('in');o.unobserve(e.target)}},{rootMargin:'0px 0px -8% 0px',threshold:.08});
+function reveal(el){if(!el)return el;if(RM){el.classList.add('in');return el}el.classList.add('reveal');revealIO.observe(el);return el}
+function revealAll(root){(root||document).querySelectorAll('.sh,.usp>div,.looks,.tilerow>*,.brandrow>*,.hrow>.card,footer .fgrid>div').forEach(reveal)}
 const $=s=>document.querySelector(s);
 const grid=$('#grid'),cats=$('#cats'),q=$('#q'),srow=$('#srow'),more=$('#more'),clr=$('#clr');
 
@@ -53,7 +58,7 @@ const LOOKS=[ // [brand, image, caption, brand regex, product-pick regex]
 ];
 const ROWS=[[1,'Trending now'],[2,'Latest finds'],[3,'Sneakers'],[10,'2026 World Cup kits']];
 
-fetch('data.json').then(r=>r.json()).then(d=>{D=d;buildCats();buildHero();buildLooks();buildTiles();buildRows();wireNav();applyURL()});
+fetch('data.json').then(r=>r.json()).then(d=>{D=d;const sk=$('#sk');if(sk)sk.remove();buildCats();buildHero();buildLooks();buildTiles();buildRows();wireNav();applyURL();revealAll()});
 function applyURL(){const u=new URLSearchParams(location.search);const t=u.get('tab'),c=u.get('c'),qq=u.get('q');
  if(c){const b=BRANDS.concat(MODELS.map(m=>[m[0],m[1]])).find(x=>x[0].toLowerCase()===c.toLowerCase());if(b){setPreset(b[0],b[1]);return}}
  if(t!=null&&D.tabs[+t]){tab=+t;markCats();render(true);return}
@@ -77,10 +82,10 @@ function btn(i,name,n){const b=document.createElement('button');b.className='cat
 function buildHero(){const s=$('#slides'),dots=$('#dots');let cur=0,timer;
  HERO.forEach((h,i)=>{const l=match(h.rx),mp=minPrice(l.filter(x=>x[2].includes(3)||SHOE.test(x[1])));const el=document.createElement('div');el.className='slide';
   el.innerHTML='<div class="txt"><div class="kick">'+h.kick+'</div><h2>'+h.title+'</h2><div class="sub"><b>'+l.length+' listings</b>'+(mp?' · from <b>€'+mp.toFixed(2)+'</b>':'')+'</div><button class="cta">Browse '+h.title+' <span>→</span></button></div><div class="pic"><img src="'+h.img+'" alt="'+h.title+'" '+(i?'loading="lazy"':'fetchpriority="high"')+'></div><div class="big">'+h.title+'</div>';
-  el.querySelector('.cta').onclick=()=>setPreset(h.title,h.rx);s.appendChild(el);
-  const d=document.createElement('button');d.textContent=i+1;d.onclick=()=>{go(i);restart()};dots.appendChild(d)});
- function go(i){cur=(i+HERO.length)%HERO.length;s.style.transform='translateX(-'+cur*100+'%)';dots.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('on',j===cur))}
- function restart(){clearInterval(timer);timer=setInterval(()=>go(cur+1),6000)}
+  el.querySelector('.cta').onclick=()=>setPreset(h.title,h.rx);el.querySelectorAll('.txt>*').forEach((x,j)=>x.style.setProperty('--i',j));if(!i&&!RM)el.classList.add('first');s.appendChild(el);
+  const d=document.createElement('button');d.textContent=i+1;d.setAttribute('aria-label','Show '+h.title+' slide');d.onclick=()=>{go(i);restart()};dots.appendChild(d)});
+ function go(i){cur=(i+HERO.length)%HERO.length;s.style.transform='translateX(-'+cur*100+'%)';dots.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('on',j===cur));s.querySelectorAll('.slide').forEach((el,j)=>el.classList.toggle('on',j===cur))}
+ function restart(){clearInterval(timer);if(!RM)timer=setInterval(()=>go(cur+1),6000)}
  go(0);restart();
  let x0=null;s.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});s.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){go(cur+(dx<0?1:-1));restart()}x0=null});}
 
@@ -91,7 +96,7 @@ function buildLooks(){const s=$('#looks');let cur=0,timer;const usedP=new Set();
    '<div class="pd"><div class="pim"><img src="images/'+p[0]+'_0.webp" loading="lazy" alt=""></div><div class="pn">'+p[1]+'</div>'+(p[5]!=null?'<div class="lprice">'+(p[6]!=null?'from ':'')+'€'+p[5].toFixed(2)+'<small>INCL. VAT</small></div>':'')+(p[3]?'<div class="szl">Sizes '+p[3]+'</div>':'')+
    '<div class="btns"><a href="product/'+p[0]+'.html">View item →</a><button>All '+brand+'</button></div></div>';
   el.querySelector('button').onclick=()=>setPreset(brand,rx);s.appendChild(el)});
- const n=s.children.length;const go=i=>{cur=(i+n)%n;s.style.transform='translateX(-'+cur*100+'%)'};const restart=()=>{clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)go(cur+1)},7000)};
+ const n=s.children.length;const go=i=>{cur=(i+n)%n;s.style.transform='translateX(-'+cur*100+'%)'};const restart=()=>{clearInterval(timer);if(!RM)timer=setInterval(()=>{if(!document.hidden)go(cur+1)},7000)};
  $('#lkl').onclick=()=>{go(cur-1);restart()};$('#lkr').onclick=()=>{go(cur+1);restart()};go(0);restart();
  let x0=null;s.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});s.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){go(cur+(dx<0?1:-1));restart()}x0=null});}
 function buildTiles(){const m=$('#models'),b=$('#brands');
@@ -104,7 +109,7 @@ function carousel(row,every){const wrap=row.parentElement;if(!wrap.classList.con
  const step=()=>row.firstElementChild?row.firstElementChild.getBoundingClientRect().width+(parseFloat(getComputedStyle(row).columnGap)||10):200;
  const go=d=>{const max=row.scrollWidth-row.clientWidth;let x=row.scrollLeft+d*step()*2;if(d>0&&row.scrollLeft>=max-4)x=0;if(d<0&&row.scrollLeft<=4)x=max;row.scrollTo({left:x,behavior:'smooth'})};
  wrap.querySelector('.arr.l').onclick=()=>{go(-1);arm()};wrap.querySelector('.arr.r').onclick=()=>{go(1);arm()};
- let t;const arm=()=>{clearInterval(t);t=setInterval(()=>{if(!document.hidden&&!wrap.matches(':hover'))go(1)},every)};arm();}
+ let t;const arm=()=>{clearInterval(t);if(!RM)t=setInterval(()=>{if(!document.hidden&&!wrap.matches(':hover'))go(1)},every)};arm();}
 
 function buildRows(){const wrap=$('#rows');
  const used=new Set();ROWS.forEach(([ti,title])=>{const l=D.items.filter(i=>i[2][0]===ti&&i[5]!=null&&!used.has(i[0])).slice(0,14);l.forEach(i=>used.add(i[0]));if(!l.length)return;
@@ -121,7 +126,7 @@ function card(it,idx){const a=document.createElement('a');a.className='card';a.h
  const im=document.createElement('div');im.className='im';const img=document.createElement('img');img.loading='lazy';img.decoding='async';img.src='images/'+it[0]+'_0.webp';img.alt=it[1];im.appendChild(img);
  const num=document.createElement('div');num.className='num mono';num.textContent=String(idx+1).padStart(4,'0');im.appendChild(num);const bm=/og batch|top batch|best batch|pk batch|top quality|1:1/i.exec(it[1]);if(bm){const b=document.createElement('div');b.className='badge mono';b.textContent=bm[0].toUpperCase().replace('BEST BATCH','TOP BATCH').replace('TOP QUALITY','TOP BATCH').replace('1:1','1:1 BATCH');im.appendChild(b)}a.appendChild(im);
  const info=document.createElement('div');info.className='info';const tag=document.createElement('div');tag.className='tag';tag.textContent=D.tabs[it[2][0]];const nm=document.createElement('div');nm.className='nm';nm.textContent=it[1];info.appendChild(tag);info.appendChild(nm);if(it[3]){const sr=document.createElement('div');sr.className='szr';sr.textContent=/sizes$/.test(it[3])?it[3].toUpperCase():'SIZES '+it[3];info.appendChild(sr)}if(it[5]!=null){const pr=document.createElement('div');pr.className='pr';pr.innerHTML=(it[6]!=null?'<small>FROM</small>':'')+'€'+it[5].toFixed(2);info.appendChild(pr)}a.appendChild(info);return a}
-function page(){const f=document.createDocumentFragment();for(let i=shown;i<Math.min(shown+PAGE,list.length);i++)f.appendChild(card(list[i],i));grid.appendChild(f);shown=Math.min(shown+PAGE,list.length);more.hidden=shown>=list.length;more.textContent='Load more ('+(list.length-shown).toLocaleString()+')'}
+function page(){const f=document.createDocumentFragment();for(let i=shown;i<Math.min(shown+PAGE,list.length);i++)f.appendChild(reveal(card(list[i],i)));grid.appendChild(f);shown=Math.min(shown+PAGE,list.length);more.hidden=shown>=list.length;more.textContent='Load more ('+(list.length-shown).toLocaleString()+')'}
 function render(scroll){filter();grid.innerHTML='';shown=0;
  if(!list.length){grid.innerHTML='<div class="empty">No items found.</div>';srow.textContent='0 items';more.hidden=true}
  else{page();srow.textContent=list.length.toLocaleString()+' items'+(tab>=0?' · '+D.tabs[tab]:'')+(preset?' · '+preset.name:'')+(query?' · "'+query+'"':'')}
