@@ -421,3 +421,4 @@ html.has-motion .marquee .mtrack{will-change:transform}
 .fact svg{width:18px;height:18px;flex:0 0 auto;margin-top:2px;fill:none;stroke:var(--acc);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
 .fact b{display:block;font-size:13px;font-weight:600;letter-spacing:-.01em}
 .fact span{display:block;font-size:12px;color:var(--mute);margin-top:2px;line-height:1.45}
+.szh .hint{color:var(--mute);font-weight:400;text-transform:none;letter-spacing:.02em}
