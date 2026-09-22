@@ -5,16 +5,18 @@
 <meta property="og:type" content="website"><meta property="og:title" content="DRIP INDEX — Streetwear &amp; Designer Fashion Catalogue"><meta property="og:description" content="Jordan 4, Yeezy, Balenciaga Track, New Balance, Essentials, Corteiz and 3,500+ more streetwear &amp; designer pieces. Sizes, prices in EUR, real supplier photos."><meta property="og:image" content="https://drip-index.pages.dev/images/7821901500_0.webp">
 <meta name="theme-color" content="#ff4d1c">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="style.css?v=8db2bdd7">
+<link rel="stylesheet" href="style.css?v=f58ec3a3">
 </head><body>
 <a class="skip" href="#catalogue">Skip to catalogue</a>
-<div class="announce"><div class="in mono"><span>3,500+ MODELS</span><span class="dot">·</span><span>TOP BATCHES ONLY</span><span class="dot">·</span><span>EU 36–47 · XS–3XL</span><span class="dot">·</span><span>PRICES INCL. VAT</span><a href="#catalogue" class="abtn">BROWSE →</a></div></div>
-<header><div class="bar">
+<div class="announce"><div class="in mono"><span>3,500+ models</span><i>·</i><span>Top batches only</span><i>·</i><span>EU 36–47 · XS–3XL</span><i>·</i><span>Prices incl. VAT</span><a href="#catalogue">Browse the index →</a></div></div>
+<header id="hdr"><div class="bar">
 <a class="brand" href="index.html"><span class="sq"></span>DRIP<span>.</span>INDEX</a>
-<nav class="topnav"><a data-tab="3">Sneakers</a><a data-tab="4">Tees &amp; Shorts</a><a data-tab="5">Hoodies &amp; Pants</a><a data-tab="6">Jackets</a><a data-tab="7">Bags &amp; Accessories</a><a data-tab="10">Kits</a></nav>
-<div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
-<input id="q" type="search" placeholder="SEARCH — JORDAN 4, YEEZY, CORTEIZ, GOYARD…" autocomplete="off" aria-label="Search"><span class="k mono">/</span></div>
-</div></header><div class="cats"><div class="in carousel"><button class="arr l" aria-label="Previous">‹</button><div class="catrow" id="cats"></div><button class="arr r" aria-label="Next">›</button></div></div>
+<nav class="topnav" aria-label="Categories"><a data-tab="3">Sneakers</a><a data-tab="4">Tees &amp; Shorts</a><a data-tab="5">Hoodies &amp; Pants</a><a data-tab="6">Jackets</a><a data-tab="7">Accessories</a><a data-tab="10">Kits</a></nav>
+<div class="tools">
+<div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+<input id="q" type="search" placeholder="Search 3,550 pieces" autocomplete="off" aria-label="Search"><span class="k mono">/</span></div>
+<button class="menu" id="menu" type="button" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+</div></div><div class="hprog" id="hprog" aria-hidden="true"></div><nav class="mobnav" id="mobnav" hidden aria-label="Categories"><a data-tab="3">Sneakers</a><a data-tab="4">Tees &amp; Shorts</a><a data-tab="5">Hoodies &amp; Pants</a><a data-tab="6">Jackets</a><a data-tab="7">Accessories</a><a data-tab="10">Kits</a></nav></header>
 <div class="wrap">
 <section class="usp">
 <div><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg><div><b>3,500+ models</b><span>Sneakers, apparel, bags, kits</span></div></div>
@@ -23,13 +25,14 @@
 <div><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg><div><b>Prices incl. VAT</b><span>In EUR, no surprises at customs</span></div></div>
 </section>
 <section class="heroslider" id="hero"><div class="slides" id="slides"></div><div class="dots" id="dots"></div></section>
-<section class="marquee" aria-label="Brands in the index"><div class="mtrack" id="mtrack"></div></section>
-<section class="lookbook"><div class="sh"><h2>Worn by</h2><span class="mono">STREET LOOKS · TAP TO SHOP THE BRAND</span></div>
+<section class="brands" aria-label="Brands in the index"><div class="sh"><div><span class="kick mono">Brands in the index</span><h2>Shop by brand</h2></div><span class="mono">Tap a brand to filter</span></div><div class="marquee"><div class="mtrack" id="mtrack"></div></div><div class="marquee rev"><div class="mtrack" id="mtrack2"></div></div></section>
+<section class="lookbook"><div class="sh"><div><span class="kick mono">Street looks</span><h2>Worn by</h2></div><span class="mono">Tap to shop the brand</span></div>
 <div class="looks"><div class="lookslides" id="looks"></div><button class="arr l" id="lkl" aria-label="Previous">‹</button><button class="arr r" id="lkr" aria-label="Next">›</button><div class="dots" id="lkdots"></div></div></section>
-<section class="tiles"><div class="sh"><h2>Shop by model</h2><span class="mono">TAP TO FILTER</span></div><div class="carousel"><button class="arr l" aria-label="Previous">‹</button><div class="tilerow" id="models"></div><button class="arr r" aria-label="Next">›</button></div></section>
-<section class="tiles"><div class="sh"><h2>Shop by brand</h2><span class="mono">APPAREL &amp; ACCESSORIES</span></div><div class="carousel"><button class="arr l" aria-label="Previous">‹</button><div class="brandrow" id="brands"></div><button class="arr r" aria-label="Next">›</button></div></section>
+<section class="tiles"><div class="sh"><div><span class="kick mono">Silhouettes</span><h2>Shop by model</h2></div><span class="mono">Tap to filter</span></div><div class="bento" id="models"></div></section>
+
 <div id="rows"></div>
-<main id="catalogue"><div class="sh"><h2>Full catalogue</h2><span class="mono">PRESS / TO SEARCH</span></div>
+<main id="catalogue"><div class="sh"><div><span class="kick mono">Everything in stock</span><h2>Full catalogue</h2></div><span class="mono">Press / to search</span></div>
+<div class="cats"><div class="in carousel"><button class="arr l" aria-label="Previous">‹</button><div class="catrow" id="cats"></div><button class="arr r" aria-label="Next">›</button></div></div>
 <div class="statusrow"><div class="s mono" id="srow">Loading…</div><button class="clr mono" id="clr" hidden>✕ CLEAR FILTER</button></div>
 <div class="grid" id="grid"></div><div class="sk" id="sk"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <button class="more mono" id="more" hidden>Load more</button></main></div>
@@ -39,4 +42,4 @@
 <div><h4 class="mono">POPULAR</h4><a data-q="jordan 4">Jordan 4</a><a data-q="yeezy">Yeezy</a><a data-q="balenciaga">Balenciaga</a><a data-q="new balance">New Balance</a><a data-q="corteiz">Corteiz</a><a data-q="essentials">Essentials</a><a data-q="goyard">Goyard</a></div>
 <div><h4 class="mono">INFO</h4><a href="#catalogue">How it works</a><a href="#catalogue">Sizes &amp; fit</a><a href="#catalogue">Shipping &amp; delivery</a><a href="#catalogue">Contact</a></div>
 </div><div class="fbot mono"><span>© 2026 DRIP INDEX</span><span>Images via supplier listings · Prices in EUR incl. VAT</span></div></div></footer>
-<script src="app.js?v=56374010"></script><script src="cart.js?v=8829591d"></script></body></html>
+<script src="app.js?v=02103b37"></script><script src="cart.js?v=21a7641f"></script></body></html>

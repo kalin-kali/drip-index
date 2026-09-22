@@ -8,7 +8,7 @@ function reveal(el){if(!el)return el;if(RM){el.classList.add('in');return el}el.
    as soon as it is anywhere near the viewport, so content can never stay invisible */
 function sweep(){document.querySelectorAll('.reveal:not(.in)').forEach(e=>{const r=e.getBoundingClientRect();if(r.top<innerHeight*1.25&&r.bottom>-200)e.classList.add('in')})}
 let sweepT;function revealFailsafe(){addEventListener('scroll',()=>{clearTimeout(sweepT);sweepT=setTimeout(sweep,80)},{passive:true});addEventListener('resize',sweep,{passive:true});[400,1200,3000].forEach(t=>setTimeout(sweep,t))}
-function revealAll(root){(root||document).querySelectorAll('.sh,.usp>div,.looks,.tilerow>*,.brandrow>*,.hrow>.card,footer .fgrid>div').forEach(reveal);revealFailsafe()}
+function revealAll(root){(root||document).querySelectorAll('.sh,.usp>div,.looks,.bento>*,.hrow>.card,footer .fgrid>div').forEach(reveal);revealFailsafe()}
 const $=s=>document.querySelector(s);
 const grid=$('#grid'),cats=$('#cats'),q=$('#q'),srow=$('#srow'),more=$('#more'),clr=$('#clr');
 
@@ -93,10 +93,12 @@ function buildHero(){const s=$('#slides'),dots=$('#dots');let cur=0,timer;
  go(0);restart();
  let x0=null;s.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});s.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){go(cur+(dx<0?1:-1));restart()}x0=null});}
 
-function buildMarquee(){const t=$('#mtrack');if(!t)return;
- const use=BRANDS.filter(([n])=>BRAND_IMG[n]).slice(0,18);
- t.innerHTML=use.map(([n,rx])=>'<button class="mb" type="button" data-b="'+n+'"><img src="images/brands/'+BRAND_IMG[n]+'" loading="lazy" alt=""><span>'+n+'</span></button>').join('');
- t.querySelectorAll('.mb').forEach(b=>{const e=BRANDS.find(x=>x[0]===b.dataset.b);b.onclick=()=>setPreset(e[0],e[1])});}
+function buildMarquee(){const rows=[$('#mtrack'),$('#mtrack2')].filter(Boolean);if(!rows.length)return;
+ const use=BRANDS.map(([n,rx])=>[n,rx,match(rx).length]).filter(([n,,c])=>BRAND_IMG[n]&&c);
+ const half=Math.ceil(use.length/2);
+ rows.forEach((t,ri)=>{const part=ri?use.slice(half):use.slice(0,half);
+  t.innerHTML=part.map(([n,,c])=>'<button class="mb" type="button" data-b="'+n+'"><img src="images/brands/'+BRAND_IMG[n]+'" loading="lazy" alt="">'+n+'<small>'+c+'</small></button>').join('');
+  t.querySelectorAll('.mb').forEach(b=>{const e=BRANDS.find(x=>x[0]===b.dataset.b);b.onclick=()=>setPreset(e[0],e[1])})});}
 function buildLooks(){const s=$('#looks');let cur=0,timer;const usedP=new Set();
  LOOKS.forEach((L,i)=>{const [brand,img,cap,rx,prx]=L;const all=match(rx);const fresh=f=>all.find(x=>f(x)&&!usedP.has(x[0]));const p=fresh(x=>prx.test(x[1])&&x[5]!=null)||fresh(x=>x[5]!=null)||all.find(x=>prx.test(x[1])&&x[5]!=null)||all[0];if(!p)return;usedP.add(p[0]);
   const el=document.createElement('div');el.className='look';
@@ -107,12 +109,14 @@ function buildLooks(){const s=$('#looks');let cur=0,timer;const usedP=new Set();
  const n=s.children.length;const go=i=>{cur=(i+n)%n;s.style.transform='translateX(-'+cur*100+'%)'};const restart=()=>{clearInterval(timer);if(!RM)timer=setInterval(()=>{if(!document.hidden)go(cur+1)},7000)};
  $('#lkl').onclick=()=>{go(cur-1);restart()};$('#lkr').onclick=()=>{go(cur+1);restart()};go(0);restart();
  let x0=null;s.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});s.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){go(cur+(dx<0?1:-1));restart()}x0=null});}
-function buildTiles(){const m=$('#models'),b=$('#brands');
- MODELS.forEach(([name,rx,img])=>{const l=match(rx);if(!l.length)return;const im=img?'images/models/'+img+'.webp':'images/'+l[0][0]+'_0.webp';
-  const t=document.createElement('button');t.className='tile';t.innerHTML='<div class="ti"><img src="'+im+'" loading="lazy" alt=""></div><div class="tt"><b>'+name+'</b><span>'+l.length+'</span></div>';t.onclick=()=>setPreset(name,rx);m.appendChild(t)});
- BRANDS.forEach(([name,rx])=>{const l=match(rx);if(!l.length)return;const t=document.createElement('button');t.className='bchip';const im=BRAND_IMG[name]?'images/brands/'+BRAND_IMG[name]:'images/'+l[0][0]+'_0.webp';
-  t.innerHTML='<div class="bi"><img src="'+im+'" loading="lazy" alt=""></div><div class="bt">'+name+'<small>'+l.length+'</small></div>';t.onclick=()=>setPreset(name,rx);b.appendChild(t)});
- carousel(m,4500);carousel(b,3500);}
+function buildTiles(){const m=$('#models');if(!m)return;
+ const SPAN=['w2 h2','w2','','','','','w2','','','','',''];
+ MODELS.map(([name,rx,img])=>[name,rx,img,match(rx).length]).filter(x=>x[3]).slice(0,12).forEach(([name,rx,img,n],i)=>{
+  const im=img?'images/models/'+img+'.webp':'images/'+match(rx)[0][0]+'_0.webp';
+  const t=document.createElement('button');t.type='button';t.className='bt '+(SPAN[i]||'');
+  t.innerHTML='<img src="'+im+'" loading="lazy" alt="" aria-hidden="true"><span class="shade"></span><span class="glow"></span><span class="lbl"><b>'+name+'</b><span>'+n+' listings</span></span>';
+  t.onclick=()=>setPreset(name,rx);m.appendChild(t)});
+}
 function carousel(row,every){const wrap=row.parentElement;if(!wrap.classList.contains('carousel'))return;
  const step=()=>row.firstElementChild?row.firstElementChild.getBoundingClientRect().width+(parseFloat(getComputedStyle(row).columnGap)||10):200;
  const go=d=>{const max=row.scrollWidth-row.clientWidth;let x=row.scrollLeft+d*step()*2;if(d>0&&row.scrollLeft>=max-4)x=0;if(d<0&&row.scrollLeft<=4)x=max;row.scrollTo({left:x,behavior:'smooth'})};
@@ -144,3 +148,10 @@ more.onclick=page;clr.onclick=()=>{preset=null;tab=-1;query='';q.value='';markCa
 new IntersectionObserver(e=>{if(e[0].isIntersecting&&!more.hidden)page()},{rootMargin:'1000px'}).observe(more);
 let deb;q.addEventListener('input',()=>{clearTimeout(deb);deb=setTimeout(()=>{query=q.value;preset=null;render(query.length>0)},130)});
 document.addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement!==q){e.preventDefault();q.focus()}});
+/* header: solid after a little scroll + a reading-progress line */
+(function header(){const h=document.getElementById('hdr'),pr=document.getElementById('hprog'),mn=document.getElementById('menu'),mv=document.getElementById('mobnav');
+ const on=()=>{if(h)h.classList.toggle('solid',scrollY>24);
+  if(pr){const max=document.body.scrollHeight-innerHeight;pr.style.transform='scaleX('+(max>0?Math.min(1,scrollY/max):0)+')'}};
+ addEventListener('scroll',on,{passive:true});on();
+ if(mn&&mv){mn.onclick=()=>{const o=mv.hidden;mv.hidden=!o;mn.setAttribute('aria-expanded',String(o))};
+  mv.querySelectorAll('[data-tab]').forEach(a=>a.addEventListener('click',()=>{mv.hidden=true;mn.setAttribute('aria-expanded','false')}))}})();

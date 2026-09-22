@@ -78,6 +78,19 @@ function addToCart(item) {
   save(c); openCart(true);
 }
 
+/* ---------- header: solid on scroll, progress line, mobile menu (product pages have no app.js) ---------- */
+(function hdr(){
+  const h = document.getElementById('hdr'), pr = document.getElementById('hprog'),
+        mn = document.getElementById('menu'), mv = document.getElementById('mobnav');
+  if (!h || h.dataset.wired) return; h.dataset.wired = '1';
+  const on = () => { h.classList.toggle('solid', scrollY > 24);
+    if (pr) { const max = document.body.scrollHeight - innerHeight; pr.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, scrollY / max) : 0) + ')' } };
+  addEventListener('scroll', on, { passive: true }); on();
+  if (mn && mv) mn.onclick = () => { const o = mv.hidden; mv.hidden = !o; mn.setAttribute('aria-expanded', String(o)) };
+  const q = document.getElementById('q');
+  addEventListener('keydown', e => { if (e.key === '/' && q && document.activeElement !== q) { e.preventDefault(); q.focus() } });
+})();
+
 /* ---------- support widget (floating) + footer contacts ---------- */
 const CH = [
   { k: 'instagram', label: 'Instagram', href: v => 'https://instagram.com/' + v.replace(/^@/, ''), icon: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>' },
@@ -157,6 +170,14 @@ if (ld && pinfo) {
     const priceEl = wrap.querySelector('#bprice'), err = wrap.querySelector('#err');
     let qty = 1; const qn = wrap.querySelector('#qn');
     wrap.querySelectorAll('.qty button').forEach(b => b.onclick = () => { qty = Math.max(1, Math.min(9, qty + (b.dataset.q === '+' ? 1 : -1))); qn.textContent = qty });
+    /* what a buyer asks before paying, answered next to the button */
+    const facts = document.createElement('div'); facts.className = 'facts';
+    facts.innerHTML = [
+      ['<path d="M12 3l8 4v5c0 4.4-3.2 8-8 9-4.8-1-8-4.6-8-9V7Z"/><path d="m8.6 12 2.4 2.4 4.4-4.8"/>', 'Top batches only', 'Every listing is a vetted batch, photographed by the supplier.'],
+      ['<rect x="2" y="7" width="12" height="9" rx="1.5"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/>', 'Shipping quoted per order', 'Combined shipping across the whole bag.'],
+      ['<path d="M3 9.5 9.5 3 21 14.5 14.5 21Z"/><path d="M7 9l1.6 1.6M10 12l1.6 1.6M13 15l1.6 1.6"/>', 'Sizes as listed', P.size && P.size.length ? 'This piece runs ' + P.size[0] + '–' + P.size[P.size.length - 1] + '.' : 'Sizes shown are the ones the supplier stocks.']
+    ].map(([ic, t, d]) => `<div class="fact"><svg viewBox="0 0 24 24" aria-hidden="true">${ic}</svg><div><b>${t}</b><span>${d}</span></div></div>`).join('');
+    wrap.after(facts);
     wrap.querySelector('.addbtn').onclick = e => {
       if (colChips.length && !colSel) { err.textContent = 'Pick a colour first'; const cr = document.querySelector('.cols'); cr.classList.add('shake'); setTimeout(() => cr.classList.remove('shake'), 500); cr.scrollIntoView({ block: 'nearest', behavior: RM_ ? 'auto' : 'smooth' }); return }
       if (chips.length && !sel) { err.textContent = 'Pick a size first'; document.querySelector('.sizes').classList.add('shake'); setTimeout(() => document.querySelector('.sizes').classList.remove('shake'), 500); return }
@@ -179,11 +200,12 @@ if (!RM_) import('https://cdn.jsdelivr.net/npm/motion@12/+esm').then(M => {
   document.documentElement.classList.add('has-motion');
 
   /* brand strip: continuous marquee */
-  const track = document.querySelector('.marquee .mtrack');
-  if (track && track.children.length) {
+  document.querySelectorAll('.marquee .mtrack').forEach((track, i) => {
+    if (!track.children.length) return;
     track.innerHTML += track.innerHTML;
-    animate(track, { transform: ['translateX(0)', 'translateX(-50%)'] }, { duration: 45, ease: 'linear', repeat: Infinity });
-  }
+    const from = i ? 'translateX(-50%)' : 'translateX(0)', to = i ? 'translateX(0)' : 'translateX(-50%)';
+    animate(track, { transform: [from, to] }, { duration: 55 + i * 10, ease: 'linear', repeat: Infinity });
+  });
 
   /* product photo drifts slightly as you scroll past it */
   const gal = document.querySelector('.pp .gal'), pic = gal && gal.querySelector('.main img');
