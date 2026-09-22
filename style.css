@@ -243,3 +243,72 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .sk i{display:block;background:var(--card);aspect-ratio:.78;position:relative;overflow:hidden}
 .sk i::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--ink) 7%,transparent),transparent);transform:translateX(-100%);animation:shim 1.3s infinite}
 @keyframes shim{to{transform:translateX(100%)}}
+
+/* ===== cart ===== */
+.cartbtn{position:relative;display:inline-flex;align-items:center;gap:7px;background:none;border:1px solid var(--line);color:var(--ink);padding:9px 12px;cursor:pointer;flex:0 0 auto;transition:border-color .15s,transform .15s}
+.cartbtn:hover{border-color:var(--acc);transform:translateY(-1px)}
+.cartbtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+.cartbtn .cn{font-size:11px;min-width:18px;height:18px;display:grid;place-items:center;border-radius:9px;background:var(--chip);color:var(--mute)}
+.cartbtn.has .cn{background:var(--acc);color:#fff}
+.cartbtn.bump{animation:bump .4s}
+@keyframes bump{30%{transform:scale(1.12)}60%{transform:scale(.96)}100%{transform:none}}
+.cbackdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .26s;z-index:40}
+.cbackdrop.on{opacity:1;pointer-events:auto}
+.cdrawer{position:fixed;top:0;right:0;height:100dvh;width:min(420px,100%);background:var(--paper);border-left:1px solid var(--line);z-index:41;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.2,.7,.2,1);box-shadow:-20px 0 60px rgba(0,0,0,.35)}
+.cdrawer.on{transform:none}
+.cdrawer .ch{display:flex;justify-content:space-between;align-items:center;padding:18px 18px 14px;border-bottom:1px solid var(--line)}
+.cdrawer .ch b{font-family:"Archivo",sans-serif;font-size:18px;letter-spacing:-.02em}
+.cdrawer .cx{background:none;border:0;color:var(--mute);font-size:16px;cursor:pointer;padding:4px 8px}
+.cdrawer .cx:hover{color:var(--acc)}
+.cbody{flex:1;overflow:auto;padding:8px 0}
+.cempty{padding:60px 20px;text-align:center;color:var(--mute);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.ci{display:grid;grid-template-columns:64px 1fr auto;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);align-items:center}
+.ci .cim{display:block;width:64px;aspect-ratio:1;background:var(--imbg);overflow:hidden}
+.ci .cim img{width:100%;height:100%;object-fit:cover}
+.ci .cnm{display:block;font-size:13px;font-weight:600;line-height:1.25;letter-spacing:-.01em}
+.ci .cnm:hover{color:var(--acc)}
+.ci .csz{font-size:10px;color:var(--mute);letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+.ci .cpr{font-family:"Archivo",sans-serif;font-weight:700;font-size:14px;color:var(--acc);margin-top:3px}
+.cqty{display:flex;align-items:center;gap:6px}
+.cqty button{width:24px;height:24px;border:1px solid var(--line);background:none;color:var(--ink);cursor:pointer;font-size:13px;line-height:1}
+.cqty button:hover{border-color:var(--acc);color:var(--acc)}
+.cqty span{font-family:"IBM Plex Mono",monospace;font-size:12px;min-width:16px;text-align:center}
+.cqty .crm{border-color:transparent;color:var(--mute)}
+.cfoot{border-top:1px solid var(--line);padding:16px 18px 20px;display:grid;gap:10px}
+.cfoot .crow{display:flex;justify-content:space-between;align-items:baseline}
+.cfoot .crow .mono{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.cfoot .crow b{font-family:"Archivo",sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em}
+.cnote{font-size:10px;color:var(--mute);letter-spacing:.05em;text-transform:uppercase}
+.cbtns{display:flex;gap:8px;flex-wrap:wrap}
+.cta{flex:1;min-width:120px;text-align:center;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:14px 12px;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:var(--paper)}
+.cta.copy{background:var(--acc);border-color:var(--acc);color:#fff}
+.cta:hover{filter:brightness(1.08)}
+/* ===== product page: buy box + animated hero ===== */
+.buybox{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0 6px}
+.buybox .qty{display:flex;align-items:center;gap:8px;border:1px solid var(--line);padding:9px 10px}
+.buybox .qty button{width:22px;height:22px;border:0;background:none;color:var(--ink);cursor:pointer;font-size:15px;line-height:1}
+.buybox .qty button:hover{color:var(--acc)}
+.buybox .qty span{font-family:"IBM Plex Mono",monospace;font-size:13px;min-width:14px;text-align:center}
+.addbtn{flex:1;min-width:200px;background:var(--acc);color:#fff;border:0;padding:16px 20px;font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:transform .15s,filter .15s}
+.addbtn b{font-family:"Archivo",sans-serif;font-weight:800;letter-spacing:-.01em}
+.addbtn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.addbtn.done{animation:added .9s}
+@keyframes added{0%{transform:scale(1)}25%{transform:scale(.97)}60%{transform:scale(1.02)}100%{transform:none}}
+.buybox .err{flex-basis:100%;color:var(--acc);font-size:11px;letter-spacing:.06em;text-transform:uppercase;min-height:14px}
+.sizes.shake{animation:shk .45s}
+@keyframes shk{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}100%{transform:none}}
+.sz{cursor:pointer;transition:border-color .15s,color .15s,background .15s,transform .15s;user-select:none}
+.sz:hover{transform:translateY(-1px)}
+.sz.on{border-color:var(--acc);background:var(--acc);color:#fff}
+.sz.on em{color:#fff}
+/* hero: brand wordmark + float, like the reference product pages */
+.gal .main{position:relative;overflow:hidden}
+.gal .main .wm{position:absolute;inset:auto 0 6% 0;text-align:center;font-family:"Archivo",sans-serif;font-weight:800;font-size:clamp(46px,13vw,150px);line-height:.9;letter-spacing:-.05em;text-transform:uppercase;color:color-mix(in srgb,var(--ink) 9%,transparent);pointer-events:none;z-index:0;white-space:nowrap}
+.gal .main img{position:relative;z-index:1}
+@media (prefers-reduced-motion: no-preference){
+ .gal .main.anim img{animation:heroIn .7s cubic-bezier(.2,.7,.2,1) both, floaty 7s ease-in-out 1.2s infinite}
+ @keyframes heroIn{from{opacity:0;transform:translateY(22px) scale(.97) rotate(-2deg)}to{opacity:1;transform:none}}
+ @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+ .gal .main.anim .wm{animation:wmIn .9s cubic-bezier(.2,.7,.2,1) both}
+ @keyframes wmIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+}
