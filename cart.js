@@ -20,7 +20,21 @@ const RM_ = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const ROOT = document.querySelector('.brand') && document.querySelector('.brand').getAttribute('href') === 'index.html' ? '' : '../';
 
 const money = n => '€' + n.toFixed(2);
+const BKEY = 'drip.buyer.v1', RKEY = 'drip.ref.v1';
 const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || [] } catch (e) { return [] } };
+const loadBuyer = () => { try { return JSON.parse(localStorage.getItem(BKEY)) || {} } catch (e) { return {} } };
+const saveBuyer = b => { try { localStorage.setItem(BKEY, JSON.stringify(b)) } catch (e) {} };
+/* one reference per bag, so a customer and we can refer to the same order later */
+function orderRef() {
+  let r = null; try { r = localStorage.getItem(RKEY) } catch (e) {}
+  if (!r) {
+    const d = new Date(), p = n => String(n).padStart(2, '0');
+    r = 'DI-' + p(d.getDate()) + p(d.getMonth() + 1) + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    try { localStorage.setItem(RKEY, r) } catch (e) {}
+  }
+  return r;
+}
+const clearRef = () => { try { localStorage.removeItem(RKEY) } catch (e) {} };
 const save = c => { try { localStorage.setItem(KEY, JSON.stringify(c)) } catch (e) {} paint() };
 const count = c => c.reduce((n, i) => n + i.qty, 0);
 const total = c => c.reduce((n, i) => n + i.qty * i.price, 0);
@@ -57,15 +71,44 @@ function paint() {
     <div class="cinf"><a class="cnm" href="${ROOT}product/${i.spu}.html">${i.name}</a>
     ${(i.size || i.color) ? `<div class="csz mono">${[i.color ? 'Colour ' + i.color : '', i.size ? 'Size ' + i.size : ''].filter(Boolean).join(' · ')}</div>` : ''}<div class="cpr">${money(i.price)}</div></div>
     <div class="cqty"><button type="button" data-a="-" data-k="${k}" aria-label="Decrease quantity">−</button><span>${i.qty}</span><button type="button" data-a="+" data-k="${k}" aria-label="Increase quantity">+</button><button class="crm" type="button" data-a="x" data-k="${k}" aria-label="Remove">✕</button></div></div>`).join('');
-  const t = total(c);
+  const t = total(c), b = loadBuyer(), ref = orderRef();
   foot.innerHTML = `<div class="crow"><span class="mono">Subtotal</span><b>${money(t)}</b></div>
-    <div class="cnote mono">Incl. VAT · shipping calculated at checkout</div>
-    <div class="cbtns"><button class="cta copy" type="button">Copy order</button>${ORDER_WHATSAPP ? '<a class="cta wa" target="_blank" rel="noopener">WhatsApp</a>' : ''}${ORDER_EMAIL ? '<a class="cta mail">Email</a>' : ''}</div>`;
-  const txt = 'DRIP INDEX order:\n' + c.map(i => `• ${i.name}${i.color ? ' / colour ' + i.color : ''}${i.size ? ' / size ' + i.size : ''} x${i.qty} — ${money(i.price * i.qty)}  (${location.origin}/product/${i.spu})`).join('\n') + `\nTotal: ${money(t)}`;
+    <div class="cnote mono">Incl. VAT · shipping quoted per order · Ref ${ref}</div>
+    <div class="cform">
+      <label><span class="mono">Name *</span><input id="bname" value="${(b.name || '').replace(/"/g, '&quot;')}" autocomplete="name" placeholder="Име и фамилия"></label>
+      <label><span class="mono">Phone *</span><input id="bphone" value="${(b.phone || '').replace(/"/g, '&quot;')}" autocomplete="tel" inputmode="tel" placeholder="08xx xxx xxx"></label>
+      <label class="wide"><span class="mono">Delivery — town &amp; Econt office</span><input id="baddr" value="${(b.addr || '').replace(/"/g, '&quot;')}" autocomplete="street-address" placeholder="гр. София, Еконт офис …"></label>
+      <label class="wide"><span class="mono">Note</span><input id="bnote" value="${(b.note || '').replace(/"/g, '&quot;')}" placeholder="Друг размер, цвят, въпрос…"></label>
+    </div>
+    <div class="cbtns"><button class="cta copy" type="button">Copy order</button>${ORDER_WHATSAPP ? '<a class="cta wa" target="_blank" rel="noopener">WhatsApp</a>' : ''}${ORDER_EMAIL ? '<a class="cta mail">Email</a>' : ''}</div>
+    <div class="cerr mono" id="cerr"></div>`;
+  const fields = ['name', 'phone', 'addr', 'note'].map(k => [k, foot.querySelector('#b' + k)]);
+  const read = () => { const o = {}; fields.forEach(([k, el]) => o[k] = el.value.trim()); return o };
+  fields.forEach(([, el]) => el.addEventListener('input', () => saveBuyer(read())));
+  const err = foot.querySelector('#cerr');
+  const orderText = () => {
+    const d = read();
+    return `DRIP INDEX order ${ref}\n`
+      + c.map(i => `• ${i.name}${i.color ? ' / colour ' + i.color : ''}${i.size ? ' / size ' + i.size : ''} x${i.qty} — ${money(i.price * i.qty)}  (${location.origin}/product/${i.spu})`).join('\n')
+      + `\nTotal: ${money(t)}\n\nName: ${d.name}\nPhone: ${d.phone}`
+      + (d.addr ? `\nDelivery: ${d.addr}` : '') + (d.note ? `\nNote: ${d.note}` : '');
+  };
+  /* name and phone are what makes an order answerable — ask for them before sending */
+  const ready = () => {
+    const d = read();
+    if (!d.name || !d.phone) {
+      err.textContent = 'Add your name and phone so we can confirm the order';
+      (!d.name ? fields[0][1] : fields[1][1]).focus();
+      return false;
+    }
+    err.textContent = ''; saveBuyer(d); return true;
+  };
   const cp = foot.querySelector('.copy');
-  cp.onclick = () => { navigator.clipboard.writeText(txt).then(() => { cp.textContent = 'Copied ✓'; setTimeout(() => cp.textContent = 'Copy order', 1600) }) };
-  const wa = foot.querySelector('.wa'); if (wa) wa.href = 'https://wa.me/' + ORDER_WHATSAPP + '?text=' + encodeURIComponent(txt);
-  const ml = foot.querySelector('.mail'); if (ml) ml.href = 'mailto:' + ORDER_EMAIL + '?subject=' + encodeURIComponent('DRIP INDEX order') + '&body=' + encodeURIComponent(txt);
+  cp.onclick = () => { if (!ready()) return; navigator.clipboard.writeText(orderText()).then(() => { cp.textContent = 'Copied ✓'; setTimeout(() => cp.textContent = 'Copy order', 1600) }) };
+  const wa = foot.querySelector('.wa');
+  if (wa) wa.onclick = e => { if (!ready()) { e.preventDefault(); return } wa.href = 'https://wa.me/' + ORDER_WHATSAPP + '?text=' + encodeURIComponent(orderText()) };
+  const ml = foot.querySelector('.mail');
+  if (ml) ml.onclick = e => { if (!ready()) { e.preventDefault(); return } ml.href = 'mailto:' + ORDER_EMAIL + '?subject=' + encodeURIComponent('DRIP INDEX order ' + ref) + '&body=' + encodeURIComponent(orderText()) };
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('.cqty button'); if (!b) return;
@@ -73,6 +116,7 @@ document.addEventListener('click', e => {
   if (b.dataset.a === '+') c[k].qty++;
   else if (b.dataset.a === '-') { c[k].qty--; if (c[k].qty < 1) c.splice(k, 1) }
   else c.splice(k, 1);
+  if (!c.length) clearRef();
   save(c);
 });
 function addToCart(item) {
