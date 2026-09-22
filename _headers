@@ -7,6 +7,11 @@
   Cache-Control: public, max-age=604800
 /data.json
   Cache-Control: public, max-age=3600
+# v2 bundles are content-hashed, so they can be cached forever; its shell can't.
+/v2/a/*
+  Cache-Control: public, max-age=31536000, immutable
+/v2/index.html
+  Cache-Control: public, max-age=300
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
