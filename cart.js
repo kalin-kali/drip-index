@@ -145,6 +145,7 @@ if (ld && pinfo) {
         const b = document.createElement('button');
         b.type = 'button'; b.className = 'cw'; b.dataset.color = c.n;
         b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', 'false'); b.title = c.n;
+        if (!c.i) b.classList.add('txt');
         b.innerHTML = c.i ? `<img src="${c.i}?w=120" loading="lazy" referrerpolicy="no-referrer" alt="${c.n}">` : `<span class="cwt">${c.n}</span>`;
         b.onclick = () => { colChips.forEach(x => { x.classList.remove('on'); x.setAttribute('aria-checked', 'false') }); b.classList.add('on'); b.setAttribute('aria-checked', 'true'); colSel = c.n; pickLabel.textContent = c.n; if (err) err.textContent = '' };
         row.appendChild(b); colChips.push(b);

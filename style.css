@@ -322,9 +322,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .szh .cpick{color:var(--ink);text-transform:none;letter-spacing:0;font-size:11px;margin-left:6px}
 .cols{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
 .cols.shake{animation:shk .45s}
-.cw{width:54px;height:54px;padding:0;border:1px solid var(--line);background:var(--card);cursor:pointer;overflow:hidden;position:relative;transition:transform .15s,border-color .15s,box-shadow .15s}
+.cw{width:54px;height:54px;padding:0;border:1px solid var(--line);border-radius:10px;background:var(--card);cursor:pointer;overflow:hidden;position:relative;transition:transform .15s,border-color .15s,box-shadow .15s}
 .cw img{width:100%;height:100%;object-fit:cover;display:block}
-.cw .cwt{display:grid;place-items:center;width:100%;height:100%;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--mute);padding:2px;text-align:center;line-height:1.1;overflow:hidden}
+.cw.txt{width:auto;min-width:54px;max-width:190px;height:44px;border-radius:10px;padding:0 14px}
+.cw .cwt{display:grid;place-items:center;width:100%;height:100%;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cw.txt.on{background:var(--acc);border-color:var(--acc)}
+.cw.txt.on .cwt{color:#fff}
+.cw.txt.on::after{display:none}
 .cw:hover{transform:translateY(-2px);border-color:var(--acc)}
 .cw.on{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc) inset,0 6px 18px rgba(255,77,28,.25)}
 .cw.on::after{content:"✓";position:absolute;right:2px;bottom:1px;font-size:10px;color:#fff;background:var(--acc);padding:0 3px;border-radius:2px}
