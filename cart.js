@@ -170,53 +170,32 @@ if (ld && pinfo) {
 paint();
 
 /* ---------- Motion (framer-motion's vanilla build) — progressive enhancement ----------
-   Loaded from the CDN as an ES module; if it fails, the CSS animations above still run. */
+   Only effects that cannot hide content if the library fails to load: the brand marquee,
+   a spring on the cart drawer and a little scroll drift on the product photo.
+   Element reveal stays on CSS (app.js / the inline script on product pages), so a failed
+   import or a stalled animation can never leave the page blank. */
 if (!RM_) import('https://cdn.jsdelivr.net/npm/motion@12/+esm').then(M => {
-  const { animate, inView, stagger, scroll } = M;
+  const { animate, scroll } = M;
   document.documentElement.classList.add('has-motion');
 
-  /* section + card reveal with spring physics instead of a flat CSS transition */
-  const groups = [
-    ['.usp > div', 0.05], ['.tilerow > *', 0.05], ['.brandrow > *', 0.04],
-    ['.hrow > .card', 0.05], ['.grid > .card', 0.03], ['.sh', 0], ['footer .fgrid > div', 0.06]
-  ];
-  const seen = new WeakSet();
-  const play = (els, st) => animate(els, { opacity: [0, 1], transform: ['translateY(18px) scale(.985)', 'none'] },
-    { duration: .5, delay: stagger(st), easing: [.2, .7, .2, 1] });
-  groups.forEach(([sel, st]) => {
-    document.querySelectorAll(sel).forEach(el => { if (!seen.has(el)) { seen.add(el); el.classList.remove('reveal') } });
-  });
-  const io = new IntersectionObserver((es, o) => {
-    const batch = es.filter(e => e.isIntersecting).map(e => e.target);
-    if (batch.length) { play(batch, .04); batch.forEach(t => o.unobserve(t)) }
-  }, { rootMargin: '0px 0px -6% 0px', threshold: .08 });
-  groups.forEach(([sel]) => document.querySelectorAll(sel).forEach(el => { el.style.opacity = 0; io.observe(el) }));
-  /* cards added by "Load more" join the same treatment */
-  const grid = document.getElementById('grid');
-  if (grid) new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => {
-    if (n.nodeType === 1 && n.classList.contains('card')) { n.classList.remove('reveal'); n.style.opacity = 0; io.observe(n) }
-  }))).observe(grid, { childList: true });
-
-  /* hero: product image drifts as you scroll past it */
-  const pic = document.querySelector('.pp .gal .main img');
-  if (pic && scroll) scroll(animate(pic, { transform: ['translateY(-14px)', 'translateY(14px)'] }, { easing: 'linear' }),
-    { target: document.querySelector('.pp .gal'), offset: ['start end', 'end start'] });
-
-  /* brand strip: continuous marquee (21st.dev-style) */
+  /* brand strip: continuous marquee */
   const track = document.querySelector('.marquee .mtrack');
-  if (track) {
+  if (track && track.children.length) {
     track.innerHTML += track.innerHTML;
-    animate(track, { transform: ['translateX(0)', 'translateX(-50%)'] }, { duration: 40, easing: 'linear', repeat: Infinity });
+    animate(track, { transform: ['translateX(0)', 'translateX(-50%)'] }, { duration: 45, ease: 'linear', repeat: Infinity });
   }
 
-  /* cart drawer + support panel get a spring instead of a CSS ease */
-  const dr = document.querySelector('.cdrawer');
-  if (dr) {
-    const obs = new MutationObserver(() => {
-      if (dr.classList.contains('on')) animate(dr, { transform: ['translateX(100%)', 'translateX(0)'] }, { type: 'spring', stiffness: 260, damping: 30 });
-    });
-    obs.observe(dr, { attributes: true, attributeFilter: ['class'] });
+  /* product photo drifts slightly as you scroll past it */
+  const gal = document.querySelector('.pp .gal'), pic = gal && gal.querySelector('.main img');
+  if (pic && scroll) {
+    try { scroll(animate(pic, { transform: ['translateY(-10px)', 'translateY(10px)'] }, { ease: 'linear' }), { target: gal, offset: ['start end', 'end start'] }) } catch (e) {}
   }
+
+  /* cart drawer: spring instead of a CSS ease */
+  const dr = document.querySelector('.cdrawer');
+  if (dr) new MutationObserver(() => {
+    if (dr.classList.contains('on')) animate(dr, { transform: ['translateX(100%)', 'translateX(0)'] }, { type: 'spring', stiffness: 260, damping: 30 });
+  }).observe(dr, { attributes: true, attributeFilter: ['class'] });
 }).catch(() => {});
 
 })();

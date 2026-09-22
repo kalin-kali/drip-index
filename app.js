@@ -4,7 +4,11 @@ let D=null,tab=-1,query='',preset=null,shown=0,list=[];const PAGE=80;
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const revealIO=RM?null:new IntersectionObserver((es,o)=>{let n=0;for(const e of es){if(!e.isIntersecting)continue;e.target.style.setProperty('--d',Math.min(n++,7)*60+'ms');e.target.classList.add('in');o.unobserve(e.target)}},{rootMargin:'0px 0px -8% 0px',threshold:.08});
 function reveal(el){if(!el)return el;if(RM){el.classList.add('in');return el}el.classList.add('reveal');revealIO.observe(el);return el}
-function revealAll(root){(root||document).querySelectorAll('.sh,.usp>div,.looks,.tilerow>*,.brandrow>*,.hrow>.card,footer .fgrid>div').forEach(reveal)}
+/* belt and braces: whatever the observer misses (or a browser quirk swallows) gets shown
+   as soon as it is anywhere near the viewport, so content can never stay invisible */
+function sweep(){document.querySelectorAll('.reveal:not(.in)').forEach(e=>{const r=e.getBoundingClientRect();if(r.top<innerHeight*1.25&&r.bottom>-200)e.classList.add('in')})}
+let sweepT;function revealFailsafe(){addEventListener('scroll',()=>{clearTimeout(sweepT);sweepT=setTimeout(sweep,80)},{passive:true});addEventListener('resize',sweep,{passive:true});[400,1200,3000].forEach(t=>setTimeout(sweep,t))}
+function revealAll(root){(root||document).querySelectorAll('.sh,.usp>div,.looks,.tilerow>*,.brandrow>*,.hrow>.card,footer .fgrid>div').forEach(reveal);revealFailsafe()}
 const $=s=>document.querySelector(s);
 const grid=$('#grid'),cats=$('#cats'),q=$('#q'),srow=$('#srow'),more=$('#more'),clr=$('#clr');
 
