@@ -432,3 +432,8 @@ html.has-motion .marquee .mtrack{will-change:transform}
 .cform input:focus{border-color:var(--acc)}
 .cform input::placeholder{color:var(--mute);font-size:12px}
 .cerr{color:var(--acc);font-size:11px;letter-spacing:.04em;min-height:14px}
+
+/* [hidden] must win over the display rules above */
+.cdrawer[hidden],.suppanel[hidden],.cbackdrop[hidden]{display:none!important}
+.addbtn.off{background:var(--chip);color:var(--mute);cursor:not-allowed;transform:none}
+.buybox .err:empty{min-height:0}

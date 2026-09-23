@@ -220,7 +220,8 @@ if (ld && pinfo) {
     const box = document.querySelector('.sizes') ? document.querySelector('.sizes').parentNode : pinfo;
     const wrap = document.createElement('div'); wrap.className = 'buybox';
     wrap.innerHTML = `<div class="qty"><button type="button" data-q="-" aria-label="Decrease quantity">−</button><span id="qn">1</span><button type="button" data-q="+" aria-label="Increase quantity">+</button></div>
-      <button class="addbtn" type="button">Add to bag${base != null ? ' · <b id="bprice">' + money(base) + '</b>' : ''}</button><div class="err mono" id="err"></div>`;
+      ${base != null ? `<button class="addbtn" type="button">Add to bag · <b id="bprice">${money(base)}</b></button>`
+        : `<button class="addbtn off" type="button" disabled>Currently unavailable</button>`}<div class="err mono" id="err">${base == null ? 'This piece is not listed by the supplier right now — ask us for an alternative.' : ''}</div>`;
     (document.querySelector('.sizes') || pinfo).after(wrap);
     const priceEl = wrap.querySelector('#bprice'), err = wrap.querySelector('#err');
     let qty = 1; const qn = wrap.querySelector('#qn');
@@ -233,7 +234,7 @@ if (ld && pinfo) {
       ['<path d="M3 9.5 9.5 3 21 14.5 14.5 21Z"/><path d="M7 9l1.6 1.6M10 12l1.6 1.6M13 15l1.6 1.6"/>', 'Sizes as listed', P.size && P.size.length ? 'This piece runs ' + P.size[0] + '–' + P.size[P.size.length - 1] + '.' : 'Sizes shown are the ones the supplier stocks.']
     ].map(([ic, t, d]) => `<div class="fact"><svg viewBox="0 0 24 24" aria-hidden="true">${ic}</svg><div><b>${t}</b><span>${d}</span></div></div>`).join('');
     wrap.after(facts);
-    wrap.querySelector('.addbtn').onclick = e => {
+    if (base != null) wrap.querySelector('.addbtn').onclick = e => {
       if (colChips.length && !colSel) { err.textContent = 'Pick a colour first'; const cr = document.querySelector('.cols'); cr.classList.add('shake'); setTimeout(() => cr.classList.remove('shake'), 500); cr.scrollIntoView({ block: 'nearest', behavior: RM_ ? 'auto' : 'smooth' }); return }
       if (chips.length && !sel) { err.textContent = 'Pick a size first'; document.querySelector('.sizes').classList.add('shake'); setTimeout(() => document.querySelector('.sizes').classList.remove('shake'), 500); return }
       const price = sel && sel.dataset.price ? +sel.dataset.price : base;
@@ -257,7 +258,7 @@ if (!RM_) import('https://cdn.jsdelivr.net/npm/motion@12/+esm').then(M => {
   /* brand strip: continuous marquee */
   document.querySelectorAll('.marquee .mtrack').forEach((track, i) => {
     if (!track.children.length) return;
-    track.innerHTML += track.innerHTML;
+    [...track.children].forEach(n => { const c = n.cloneNode(true); c.setAttribute('aria-hidden', 'true'); c.tabIndex = -1; track.appendChild(c) });
     const from = i ? 'translateX(-50%)' : 'translateX(0)', to = i ? 'translateX(0)' : 'translateX(-50%)';
     animate(track, { transform: [from, to] }, { duration: 55 + i * 10, ease: 'linear', repeat: Infinity });
   });
@@ -268,11 +269,6 @@ if (!RM_) import('https://cdn.jsdelivr.net/npm/motion@12/+esm').then(M => {
     try { scroll(animate(pic, { transform: ['translateY(-10px)', 'translateY(10px)'] }, { ease: 'linear' }), { target: gal, offset: ['start end', 'end start'] }) } catch (e) {}
   }
 
-  /* cart drawer: spring instead of a CSS ease */
-  const dr = document.querySelector('.cdrawer');
-  if (dr) new MutationObserver(() => {
-    if (dr.classList.contains('on')) animate(dr, { transform: ['translateX(100%)', 'translateX(0)'] }, { type: 'spring', stiffness: 260, damping: 30 });
-  }).observe(dr, { attributes: true, attributeFilter: ['class'] });
 }).catch(() => {});
 
 })();

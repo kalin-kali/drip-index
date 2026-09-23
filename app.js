@@ -98,7 +98,8 @@ function buildMarquee(){const rows=[$('#mtrack'),$('#mtrack2')].filter(Boolean);
  const half=Math.ceil(use.length/2);
  rows.forEach((t,ri)=>{const part=ri?use.slice(half):use.slice(0,half);
   t.innerHTML=part.map(([n,,c])=>'<button class="mb" type="button" data-b="'+n+'"><img src="images/brands/'+BRAND_IMG[n]+'" loading="lazy" alt="">'+n+'<small>'+c+'</small></button>').join('');
-  t.querySelectorAll('.mb').forEach(b=>{const e=BRANDS.find(x=>x[0]===b.dataset.b);b.onclick=()=>setPreset(e[0],e[1])})});}
+  /* delegated: the marquee clones its buttons, and clones don't carry per-button handlers */
+  t.addEventListener('click',ev=>{const b=ev.target.closest('.mb');if(!b)return;const e=BRANDS.find(x=>x[0]===b.dataset.b);if(e)setPreset(e[0],e[1])})});}
 function buildLooks(){const s=$('#looks');let cur=0,timer;const usedP=new Set();
  LOOKS.forEach((L,i)=>{const [brand,img,cap,rx,prx]=L;const all=match(rx);const fresh=f=>all.find(x=>f(x)&&!usedP.has(x[0]));const p=fresh(x=>prx.test(x[1])&&x[5]!=null)||fresh(x=>x[5]!=null)||all.find(x=>prx.test(x[1])&&x[5]!=null)||all[0];if(!p)return;usedP.add(p[0]);
   const el=document.createElement('div');el.className='look';
@@ -149,7 +150,7 @@ new IntersectionObserver(e=>{if(e[0].isIntersecting&&!more.hidden)page()},{rootM
 let deb;q.addEventListener('input',()=>{clearTimeout(deb);deb=setTimeout(()=>{query=q.value;preset=null;render(query.length>0)},130)});
 document.addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement!==q){e.preventDefault();q.focus()}});
 /* header: solid after a little scroll + a reading-progress line */
-(function header(){const h=document.getElementById('hdr'),pr=document.getElementById('hprog'),mn=document.getElementById('menu'),mv=document.getElementById('mobnav');
+(function header(){const h=document.getElementById('hdr');if(h)h.dataset.wired='1';const pr=document.getElementById('hprog'),mn=document.getElementById('menu'),mv=document.getElementById('mobnav');
  const on=()=>{if(h)h.classList.toggle('solid',scrollY>24);
   if(pr){const max=document.body.scrollHeight-innerHeight;pr.style.transform='scaleX('+(max>0?Math.min(1,scrollY/max):0)+')'}};
  addEventListener('scroll',on,{passive:true});on();
