@@ -95,7 +95,7 @@ function paint() {
     <div class="cqty"><button type="button" data-a="-" data-k="${k}" aria-label="Decrease quantity">−</button><span>${i.qty}</span><button type="button" data-a="+" data-k="${k}" aria-label="Increase quantity">+</button><button class="crm" type="button" data-a="x" data-k="${k}" aria-label="Remove">✕</button></div></div>`).join('');
   const t = total(c), n = count(c);
   foot.innerHTML = `<div class="crow"><span class="mono">Subtotal · ${n} ${n === 1 ? 'item' : 'items'}</span><b>${money(t)}</b></div>
-    <div class="cnote mono">Incl. VAT · Econt delivery · pay when it arrives</div>
+    <div class="cnote mono">Incl. VAT · Econt delivery priced at checkout · card or PayPal</div>
     <a class="cgo" href="${ROOT}checkout.html">Checkout <span aria-hidden="true">→</span></a>
     ${ORDER_WHATSAPP ? `<a class="calt mono" target="_blank" rel="noopener" href="https://wa.me/${ORDER_WHATSAPP}?text=${encodeURIComponent('DRIP INDEX — I want to order:\n' + c.map(i => `• ${i.name}${i.color ? ' / ' + i.color : ''}${i.size ? ' / size ' + i.size : ''} x${i.qty}`).join('\n'))}">or send the bag on WhatsApp</a>` : ''}`;
 }
@@ -232,7 +232,7 @@ if (ld && pinfo) {
     const facts = document.createElement('div'); facts.className = 'facts';
     facts.innerHTML = [
       ['<path d="M12 3l8 4v5c0 4.4-3.2 8-8 9-4.8-1-8-4.6-8-9V7Z"/><path d="m8.6 12 2.4 2.4 4.4-4.8"/>', 'Top batches only', 'Every listing is a vetted batch, photographed by the supplier.'],
-      ['<rect x="2" y="7" width="12" height="9" rx="1.5"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/>', 'Shipping quoted per order', 'Combined shipping across the whole bag.'],
+      ['<rect x="2" y="7" width="12" height="9" rx="1.5"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/>', 'Econt delivery from €3.44', 'Office, locker or your door — priced by weight at checkout. Pay by card or PayPal.'],
       ['<path d="M3 9.5 9.5 3 21 14.5 14.5 21Z"/><path d="M7 9l1.6 1.6M10 12l1.6 1.6M13 15l1.6 1.6"/>', 'Sizes as listed', P.size && P.size.length ? 'This piece runs ' + P.size[0] + '–' + P.size[P.size.length - 1] + '.' : 'Sizes shown are the ones the supplier stocks.']
     ].map(([ic, t, d]) => `<div class="fact"><svg viewBox="0 0 24 24" aria-hidden="true">${ic}</svg><div><b>${t}</b><span>${d}</span></div></div>`).join('');
     wrap.after(facts);

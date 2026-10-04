@@ -784,3 +784,17 @@ html.lock{overflow:hidden}
 .wshoe{grid-template-columns:minmax(0,1fr)}
 .wmeta{max-width:100%;line-height:1.6}
 @media(max-width:600px){.wanted.pinned .wshoe img{width:94vw}.wmeta{font-size:10px;letter-spacing:.1em}.wanted.pinned .wpin{padding-top:76px}}
+/* checkout: online payment */
+.paynote{margin:16px 0 14px;font-size:14px;color:var(--mute);line-height:1.5}
+.paynote b{color:var(--ink)}
+.paynote em{display:inline-block;margin-left:6px;font-style:normal;font-size:10px;letter-spacing:.08em;background:#ffd43b;color:#111;padding:2px 6px;border-radius:4px}
+.paybox{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 16px 6px;min-height:120px}
+.paybox[hidden],.cosubmit[hidden]{display:none}
+.paylogos{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.paylogos span{font-size:10px;letter-spacing:.08em;border:1px solid var(--line);border-radius:5px;padding:4px 8px;color:var(--mute);background:var(--card)}
+.sumrows span i{display:block;font-style:normal;font-size:10px;letter-spacing:.04em;color:var(--mute);margin-top:2px}
+.sumpay{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;padding:10px;border-radius:10px;background:var(--chip);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.sumpay svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8}
+.ot{font-family:"Archivo",sans-serif;font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.01em;text-transform:none}
+.fld.note{margin-top:0}
+.sumrows .sumpay{justify-content:center}
