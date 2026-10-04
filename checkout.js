@@ -56,7 +56,7 @@
     /* price next to each delivery option */
     ['office', 'address'].forEach(m => { const el = document.getElementById('ot_' + m); if (!el) return; const r = document.querySelector('input[name=ship][value=' + m + ']'), was = shipMethod(); r.checked = true; el.textContent = money(quote().ship); document.querySelector('input[name=ship][value=' + was + ']').checked = true });
     s.innerHTML = `<div class="sumh"><b>Your order</b><span class="mono">${count()} ${count() === 1 ? 'item' : 'items'} · ${ref()}</span></div>
-      <div class="sumlist">${cart.map((i, k) => `<div class="sumi"><a class="sim" href="product/${i.spu}.html"><img src="images/${i.spu}_0.webp" alt=""><span class="mono">${i.qty}</span></a>
+      <div class="sumlist">${cart.map((i, k) => `<div class="sumi"><a class="sim" href="product/${i.spu}.html"><img src="${i.img || 'images/' + i.spu + '_0.webp'}" referrerpolicy="no-referrer" alt=""><span class="mono">${i.qty}</span></a>
         <div><a class="snm" href="product/${i.spu}.html">${esc(i.name)}</a><div class="ssz mono">${[i.color ? esc(i.color) : '', i.size ? 'Size ' + esc(i.size) : ''].filter(Boolean).join(' · ')}</div>
         <button type="button" class="srm mono" data-k="${k}">Remove</button></div><b class="spr">${money(i.price * i.qty)}</b></div>`).join('')}</div>
       <div class="sumrows"><div><span>Subtotal</span><b>${money(q.sub)}</b></div>

@@ -79,9 +79,9 @@ function minPrice(l){let m=Infinity;for(const i of l)if(i[5]!=null&&i[5]<m)m=i[5
 function setPreset(name,rx){preset={name,rx};tab=-1;query='';q.value='';F.brands.clear();markCats();render(true)}
 function markCats(){document.querySelectorAll('.cat').forEach((e,j)=>e.classList.toggle('on',(j-1)===tab||(tab===-1&&j===0)))}
 
-const CAT_IMG={'-1':'models/jordan4','0':'models/dior','1':'7786621462_0','2':'7801942513_0','3':'models/balenciaga','4':'7630184358_0','5':'7629518828_0','6':'7629528692_0','7':'7630296264_0','8':'7630272600_0','9':'7821232575_0','10':'7710970001_0'};
+const CAT_IMG={'-1':'models/jordan4','0':'models/dior','1':'7786621462_0','2':'7801942513_0','3':'models/balenciaga','4':'7630184358_0','5':'7629518828_0','6':'7629528692_0','7':'7630296264_0','8':'7630244870_0','9':'7821232575_0','10':'7710970001_0'};
 const CAT_HUE=[14,262,340,200,32,150,48,290,180,220,95,120];
-const CAT_LABEL={'Selected':'Selected','Trending Now':'Trending','Latest Finds':'New in','Shoes':'Sneakers','T-Shirt And Shorts':'Tees & Shorts','Hoodies And Pants':'Hoodies & Pants','Coats And Jackets':'Jackets','Accessories':'Accessories','Electronic Products':'Tech','Trendy Brands':'Trendy brands','2026 Fifa World Cup':'World Cup kits'};
+const CAT_LABEL={'Selected':'Selected','Trending Now':'Trending','Latest Finds':'New in','Shoes':'Sneakers','T-Shirt And Shorts':'Tees & Shorts','Hoodies And Pants':'Hoodies & Pants','Coats And Jackets':'Jackets','Accessories':'Accessories','Electronic Products':'Watches','Trendy Brands':'Trendy brands','2026 Fifa World Cup':'World Cup kits'};
 function buildCats(){cats.innerHTML='';cats.appendChild(btn(-1,'All',D.items.length));
  D.tabs.forEach((t,i)=>{const n=D.items.filter(x=>x[2].includes(i)).length;if(n)cats.appendChild(btn(i,t,n))});carousel(cats,5000);}
 function btn(i,name,n){const b=document.createElement('button');b.className='cat'+(i===tab?' on':'');b.style.setProperty('--h',CAT_HUE[i+1]);
@@ -169,14 +169,13 @@ const TYPES=[
  ['jewellery','Jewellery & watches',it=>/\brings?\b|necklace|bracelet|earring|chain|pendant|watch|jewel|rolex|audemars|patek|tissot|omega|cartier|cross(?:es)?\b/i.test(it[1])],
  ['belts','Belts',it=>/\bbelts?\b/i.test(it[1])],
  ['eyewear','Eyewear',it=>/glasses|sunglass|eyewear|oakley/i.test(it[1])],
- ['tech','Tech',it=>it[2].includes(8)||/airpods|iphone|headphone|speaker|charger/i.test(it[1])],
- ['acc','Other accessories',it=>it[2].includes(7)||/socks?\b|scarf|gloves?|keychain|candle|perfume|stanley/i.test(it[1])]];
+ ['acc','Other accessories',it=>it[2].includes(7)||it[2].includes(8)||/socks?\b|scarf|gloves?|keychain|candle|perfume|stanley|\bcase\b/i.test(it[1])]];
 let BRANDLIST=[],EUALL=[],CLALL=[],TYPELIST=[];
 function prep(){const DS=window.DripSize;const eu={},cl={};
  for(const it of D.items){const m=DS.meta(it[4]);it.kind=m.kind;it.sk=m.keys;for(const k of m.keys)(k[0]==='e'?eu:cl)[k]=(k[0]==='e'?eu:cl)[k]+1||1;
   it.br=[];for(const [n,rx] of FBRANDS)if(rx.test(it[1]))it.br.push(n);
   it.ty=(TYPES.find(t=>t[2](it))||[''])[0]}
- const tyc={};for(const it of D.items)tyc[it.ty]=(tyc[it.ty]||0)+1;const ORD=['sneakers','slides','tees','shorts','hoodies','pants','jackets','sets','kits','bags','hats','jewellery','belts','eyewear','tech','acc'];TYPELIST=TYPES.filter(t=>tyc[t[0]]>=3).sort((a,b)=>ORD.indexOf(a[0])-ORD.indexOf(b[0])).map(t=>[t[0],t[1]]);
+ const tyc={};for(const it of D.items)tyc[it.ty]=(tyc[it.ty]||0)+1;const ORD=['sneakers','slides','tees','shorts','hoodies','pants','jackets','sets','kits','bags','hats','jewellery','belts','eyewear','acc'];TYPELIST=TYPES.filter(t=>tyc[t[0]]>=3).sort((a,b)=>ORD.indexOf(a[0])-ORD.indexOf(b[0])).map(t=>[t[0],t[1]]);
  EUALL=Object.keys(eu).filter(k=>eu[k]>=4).sort((a,b)=>parseFloat(a.slice(3))-parseFloat(b.slice(3)));
  CLALL=DS.CL.map(c=>'cl:'+c).filter(k=>cl[k]>=4);
  const bc={};for(const it of D.items)for(const b of it.br)bc[b]=(bc[b]||0)+1;

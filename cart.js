@@ -89,7 +89,7 @@ function paint() {
   const body = document.getElementById('cbody'), foot = document.getElementById('cfoot');
   if (!body) return;
   if (!c.length) { body.innerHTML = '<div class="cempty mono">Your bag is empty</div>' + pastOrders(); foot.innerHTML = ''; return }
-  body.innerHTML = c.map((i, k) => `<div class="ci"><a class="cim" href="${ROOT}product/${i.spu}.html"><img src="${ROOT}images/${i.spu}_0.webp" alt=""></a>
+  body.innerHTML = c.map((i, k) => `<div class="ci"><a class="cim" href="${ROOT}product/${i.spu}.html"><img src="${i.img || ROOT + 'images/' + i.spu + '_0.webp'}" referrerpolicy="no-referrer" alt=""></a>
     <div class="cinf"><a class="cnm" href="${ROOT}product/${i.spu}.html">${i.name}</a>
     ${(i.size || i.color) ? `<div class="csz mono">${[i.color ? 'Colour ' + i.color : '', i.size ? 'Size ' + i.size : ''].filter(Boolean).join(' · ')}</div>` : ''}<div class="cpr">${money(i.price)}</div></div>
     <div class="cqty"><button type="button" data-a="-" data-k="${k}" aria-label="Decrease quantity">−</button><span>${i.qty}</span><button type="button" data-a="+" data-k="${k}" aria-label="Increase quantity">+</button><button class="crm" type="button" data-a="x" data-k="${k}" aria-label="Remove">✕</button></div></div>`).join('');
@@ -176,6 +176,26 @@ if (ld && pinfo) {
     const brand = (P.name || '').split(/[—\-–(]/)[0].trim().split(/\s+/).slice(0, 2).join(' ');
     const gal = document.querySelector('.gal .main');
     if (gal && brand) { const w = document.createElement('div'); w.className = 'wm'; w.setAttribute('aria-hidden', 'true'); w.textContent = brand; gal.appendChild(w); gal.classList.add('anim') }
+    /* the big photo follows the picked colour (supplier colour shots, hotlinked at 900px) */
+    const mainImg = document.getElementById('mainimg');
+    let curSrc = mainImg ? mainImg.src : '', colImg = '', swapT;
+    const big = u => u.replace(/\?.*$/, '') + '?w=900';
+    const tag = document.createElement('span'); tag.className = 'coltag mono'; tag.hidden = true;
+    if (mainImg) mainImg.parentNode.appendChild(tag);
+    function showImg(src, label) {
+      if (!mainImg || !src) return;
+      clearTimeout(swapT);
+      if (/geilicdn/.test(src)) mainImg.referrerPolicy = 'no-referrer';
+      tag.hidden = !label || !/geilicdn/.test(src); tag.textContent = label ? 'Colour ' + label : '';
+      if (mainImg.src === src) return;
+      mainImg.classList.add('swap');
+      const pre = new Image(); pre.referrerPolicy = 'no-referrer';
+      pre.onload = pre.onerror = () => { swapT = setTimeout(() => { mainImg.src = src; mainImg.classList.remove('swap') }, RM_ ? 0 : 90) };
+      pre.src = src;
+      const th = document.getElementById('thumbs'); if (th && /geilicdn/.test(src)) th.querySelectorAll('.thumb').forEach(x => x.classList.remove('on'));
+    }
+    const thumbs = document.getElementById('thumbs');
+    if (thumbs) thumbs.addEventListener('click', e => { const t = e.target.closest('.thumb'); if (t) { curSrc = new URL(t.dataset.src, location.href).href; tag.hidden = true } });
     /* colours (from the variants blob injected per page) become required options */
     let colSel = null, colChips = [];
     const vnode = document.getElementById('vars');
@@ -190,7 +210,9 @@ if (ld && pinfo) {
         b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', 'false'); b.title = c.n;
         if (!c.i) b.classList.add('txt');
         b.innerHTML = c.i ? `<img src="${c.i}?w=120" loading="lazy" referrerpolicy="no-referrer" alt="${c.n}">` : `<span class="cwt">${c.n}</span>`;
-        b.onclick = () => { colChips.forEach(x => { x.classList.remove('on'); x.setAttribute('aria-checked', 'false') }); b.classList.add('on'); b.setAttribute('aria-checked', 'true'); colSel = c.n; pickLabel.textContent = c.n; if (err) err.textContent = '' };
+        b.onclick = () => { colChips.forEach(x => { x.classList.remove('on'); x.setAttribute('aria-checked', 'false') }); b.classList.add('on'); b.setAttribute('aria-checked', 'true'); colSel = c.n; colImg = c.i || ''; pickLabel.textContent = c.n; if (err) err.textContent = ''; if (c.i) { curSrc = big(c.i); showImg(curSrc, c.n) } };
+        /* desktop: hovering a colour previews it in the big photo, leaving goes back to the picked one */
+        if (c.i) { b.addEventListener('mouseenter', () => showImg(big(c.i), c.n)); b.addEventListener('mouseleave', () => showImg(curSrc, colSel)) }
         row.appendChild(b); colChips.push(b);
       });
       (document.querySelector('.szh') || pinfo).before(box);
@@ -241,7 +263,7 @@ if (ld && pinfo) {
       if (chips.length && !sel) { err.textContent = 'Pick a size first'; document.querySelector('.sizes').classList.add('shake'); setTimeout(() => document.querySelector('.sizes').classList.remove('shake'), 500); return }
       const price = sel && sel.dataset.price ? +sel.dataset.price : base;
       if (price == null) { err.textContent = 'This item has no price yet'; return }
-      addToCart({ spu, name: P.name, size: sel ? sel.dataset.size : '', color: colSel || '', price, qty });
+      addToCart({ spu, name: P.name, size: sel ? sel.dataset.size : '', color: colSel || '', img: colImg ? colImg.replace(/\?.*$/, '') + '?w=200' : '', price, qty });
       const b = e.currentTarget; b.classList.add('done'); setTimeout(() => b.classList.remove('done'), 900);
     };
   }
