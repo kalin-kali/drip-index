@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Checkout — DRIP INDEX</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ff4d1c">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css?v=6af5c403">
+</head><body class="cobody">
+<a class="skip" href="#co">Skip to checkout</a>
+<header id="hdr"><div class="bar">
+<a class="brand" href="index.html"><span class="sq"></span>DRIP<span>.</span>INDEX</a>
+<nav class="topnav" aria-label="Categories"><a href="index.html?tab=3">Sneakers</a><a href="index.html?tab=4">Tees &amp; Shorts</a><a href="index.html?tab=5">Hoodies &amp; Pants</a><a href="index.html?tab=6">Jackets</a><a href="index.html?tab=7">Accessories</a><a href="index.html?tab=10">Kits</a></nav>
+<div class="tools">
+<form class="search" action="index.html" method="get"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+<input id="q" name="q" type="search" placeholder="Search 3,550 pieces" autocomplete="off" aria-label="Search"><span class="k mono">/</span></form>
+<button class="menu" id="menu" type="button" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+</div></div><div class="hprog" id="hprog" aria-hidden="true"></div><nav class="mobnav" id="mobnav" hidden aria-label="Categories"><a href="index.html?tab=3">Sneakers</a><a href="index.html?tab=4">Tees &amp; Shorts</a><a href="index.html?tab=5">Hoodies &amp; Pants</a><a href="index.html?tab=6">Jackets</a><a href="index.html?tab=7">Accessories</a><a href="index.html?tab=10">Kits</a></nav></header>
+<div class="wrap co" id="co">
+<div class="cohead"><a class="coback mono" href="index.html#catalogue">← Keep shopping</a><h1>Checkout</h1>
+<ol class="costeps mono" aria-label="Progress"><li class="on">Bag</li><li class="on">Details</li><li>Confirmation</li></ol></div>
+<div class="cogrid">
+<form class="coform" id="coform" novalidate>
+<section><h2><b class="mono">01</b> Contact</h2>
+<div class="fgrid2">
+<label class="fld"><span>Full name *</span><input id="f_name" name="name" autocomplete="name" required placeholder="Име и фамилия"></label>
+<label class="fld"><span>Phone *</span><input id="f_phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="08x xxx xxxx"></label>
+<label class="fld wide"><span>Email <i>optional — for the order confirmation</i></span><input id="f_email" name="email" type="email" autocomplete="email" placeholder="you@example.com"></label>
+</div></section>
+<section><h2><b class="mono">02</b> Delivery</h2>
+<div class="opts" role="radiogroup" aria-label="Delivery method">
+<label class="opt"><input type="radio" name="ship" value="office" checked><span class="ob"><b>Econt office</b><i>Pick up from an office or parcel locker near you</i></span><span class="ot mono">Econt tariff</span></label>
+<label class="opt"><input type="radio" name="ship" value="address"><span class="ob"><b>Econt courier to your address</b><i>Delivered to your door</i></span><span class="ot mono">Econt tariff</span></label>
+</div>
+<div class="fgrid2">
+<label class="fld"><span>Town / city *</span><input id="f_city" name="city" list="cities" autocomplete="address-level2" required placeholder="Start typing — София, Пловдив…"><datalist id="cities"></datalist></label>
+<label class="fld" id="w_office"><span>Econt office *</span><select id="f_office" name="office" required disabled><option value="">Pick your town first</option></select></label>
+<label class="fld wide" id="w_addr" hidden><span>Street address *</span><input id="f_addr" name="address" autocomplete="street-address" placeholder="ул., №, бл., вх., ет., ап."></label>
+</div></section>
+<section><h2><b class="mono">03</b> Payment</h2>
+<div class="opts"><label class="opt"><input type="radio" name="pay" value="cod" checked><span class="ob"><b>Pay on delivery</b><i>Cash or card when you collect the parcel — nothing to pay now</i></span><span class="ot mono">€0 now</span></label></div>
+<label class="fld wide"><span>Note <i>optional</i></span><textarea id="f_note" name="note" rows="2" placeholder="Anything we should know — different colour, a question…"></textarea></label>
+</section>
+<button class="cosubmit" id="cosubmit" type="submit"><span>Place order</span> <b id="cobtn"></b></button>
+<p class="cofine mono">By placing the order you agree we call you to confirm it. Nothing is charged online.</p>
+<div class="coerr" id="coerr" role="alert"></div>
+</form>
+<aside class="cosum" id="cosum" aria-label="Order summary"></aside>
+</div>
+<div class="codone" id="codone" hidden></div>
+</div>
+<footer><div class="wrap"><div class="fgrid">
+<div><div class="big">DRIP.INDEX</div><p>Curated catalogue of 3,500+ sneakers, streetwear and designer pieces — top batches only, real supplier photos, every size listed, prices in EUR incl. VAT.</p></div>
+<div><h4 class="mono">CATALOGUE</h4><a href="index.html?tab=3">Sneakers</a><a href="index.html?tab=4">Tees &amp; Shorts</a><a href="index.html?tab=5">Hoodies &amp; Pants</a><a href="index.html?tab=6">Coats &amp; Jackets</a><a href="index.html?tab=7">Bags &amp; Accessories</a><a href="index.html?tab=8">Electronics</a><a href="index.html?tab=10">Football kits</a></div>
+<div><h4 class="mono">POPULAR</h4><a href="index.html?q=jordan 4">Jordan 4</a><a href="index.html?q=yeezy">Yeezy</a><a href="index.html?q=balenciaga">Balenciaga</a><a href="index.html?q=new balance">New Balance</a><a href="index.html?q=corteiz">Corteiz</a><a href="index.html?q=essentials">Essentials</a><a href="index.html?q=goyard">Goyard</a></div>
+<div><h4 class="mono">INFO</h4><a href="index.html#how">How to order</a><a href="index.html#size">Find your size</a><a href="checkout.html">Checkout</a><a href="https://www.econt.com/services/track-shipment" target="_blank" rel="noopener">Track a parcel (Econt)</a></div>
+</div><div class="fbot mono"><span>© 2026 DRIP INDEX</span><span>Images via supplier listings · Prices in EUR incl. VAT</span></div></div></footer>
+<script src="cart.js?v=e8e26f76"></script><script src="checkout.js?v=49c73321"></script>
+</body></html>

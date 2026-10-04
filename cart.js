@@ -14,26 +14,36 @@ const CONTACTS = {
 const intl = v => '+359' + v.replace(/\D/g, '').replace(/^0/, '');
 const ORDER_WHATSAPP = CONTACTS.whatsapp ? intl(CONTACTS.whatsapp).replace('+', '') : '';
 const ORDER_EMAIL    = CONTACTS.email;
+/* sizes: one key per real size, so 'XXL', '2XL' and 'XXL(34)' or '42', '42 M' all mean the same thing.
+   Shared with app.js (catalogue filter) through window.DripSize. */
+window.DripSize = (function () {
+  const CM = {35:22.5,35.5:22.5,36:23,36.5:23.5,37:23.5,37.5:24,38:24,38.5:24.5,39:24.5,39.5:25,40:25,40.5:25.5,41:26,41.5:26.5,42:26.5,42.5:27,43:27.5,43.5:28,44:28,44.5:28.5,45:29,45.5:29.5,46:30,46.5:30.5,47:30.5,47.5:31,48:31.5};
+  const CL = ['XS','S','M','L','XL','2XL','3XL','4XL','5XL'];
+  const CLMAP = {XS:'XS',S:'S',M:'M',L:'L',XL:'XL',XXL:'2XL','2XL':'2XL',XXXL:'3XL','3XL':'3XL',XXXXL:'4XL','4XL':'4XL','5XL':'5XL'};
+  const euOf = s => { const m = /^(\d{2})(\.5| 1\/3| 2\/3)?(?:\s*(?:w|m|women|men))?$/i.exec(String(s).trim()); return m ? +m[1] + (m[2] && m[2] !== ' 1/3' ? .5 : 0) : null };
+  const clOf = s => { const m = /^(XXXXL|XXXL|XXL|XL|XS|[SML]|[2-5]XL)\b(?:\s*\(.*\))?$/i.exec(String(s).trim()); return m ? CLMAP[m[1].toUpperCase()] : null };
+  /* a list of raw sizes -> {kind:'shoe'|'cloth'|null, keys:Set('eu:42','cl:L')} */
+  const meta = sizes => {
+    sizes = sizes || []; const keys = new Set(); const eu = sizes.map(euOf).filter(n => n != null);
+    if (eu.length && eu.length >= sizes.length * .6 && Math.min(...eu) >= 33 && eu.filter(n => n >= 34 && n <= 48).length >= eu.length * .8) { eu.forEach(n => keys.add('eu:' + n)); return { kind: 'shoe', keys } }
+    sizes.forEach(x => { const c = clOf(x); if (c) keys.add('cl:' + c) });
+    return { kind: keys.size ? 'cloth' : null, keys };
+  };
+  const keyOf = (s, kind) => { if (kind === 'shoe') { const n = euOf(s); return n == null ? null : 'eu:' + n } const c = clOf(s); return c ? 'cl:' + c : null };
+  const label = k => k.startsWith('eu:') ? 'EU ' + k.slice(3) : k.slice(3);
+  const PKEY = 'drip.size.v1';
+  const profile = () => { try { const v = JSON.parse(localStorage.getItem(PKEY)); return Array.isArray(v) ? v : null } catch (e) { return null } };
+  const saveProfile = keys => { try { localStorage.setItem(PKEY, JSON.stringify(keys)) } catch (e) {} document.dispatchEvent(new CustomEvent('drip:size')) };
+  return { CM, CL, euOf, clOf, meta, keyOf, label, profile, saveProfile };
+})();
 (function(){
 const KEY = 'drip.cart.v1';
 const RM_ = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const ROOT = document.querySelector('.brand') && document.querySelector('.brand').getAttribute('href') === 'index.html' ? '' : '../';
 
 const money = n => '€' + n.toFixed(2);
-const BKEY = 'drip.buyer.v1', RKEY = 'drip.ref.v1';
+const RKEY = 'drip.ref.v1';
 const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || [] } catch (e) { return [] } };
-const loadBuyer = () => { try { return JSON.parse(localStorage.getItem(BKEY)) || {} } catch (e) { return {} } };
-const saveBuyer = b => { try { localStorage.setItem(BKEY, JSON.stringify(b)) } catch (e) {} };
-/* one reference per bag, so a customer and we can refer to the same order later */
-function orderRef() {
-  let r = null; try { r = localStorage.getItem(RKEY) } catch (e) {}
-  if (!r) {
-    const d = new Date(), p = n => String(n).padStart(2, '0');
-    r = 'DI-' + p(d.getDate()) + p(d.getMonth() + 1) + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
-    try { localStorage.setItem(RKEY, r) } catch (e) {}
-  }
-  return r;
-}
 const clearRef = () => { try { localStorage.removeItem(RKEY) } catch (e) {} };
 const save = c => { try { localStorage.setItem(KEY, JSON.stringify(c)) } catch (e) {} paint() };
 const count = c => c.reduce((n, i) => n + i.qty, 0);
@@ -46,6 +56,12 @@ if (bar) {
   btn = document.createElement('button');
   btn.className = 'cartbtn'; btn.type = 'button'; btn.setAttribute('aria-label', 'Open cart');
   btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12l-1.2 11.2a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cn mono">0</span>';
+  /* "my size" pill: shows the remembered size, opens the size picker */
+  const sb = document.createElement('button'); sb.className = 'sizebtn mono'; sb.type = 'button';
+  const paintSize = () => { const p = DripSize.profile() || []; sb.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5 9.5 3 21 14.5 14.5 21Z"/><path d="M7 9l1.6 1.6M10 12l1.6 1.6M13 15l1.6 1.6"/></svg><span>' + (p.length ? p.map(DripSize.label).join(' · ') : 'My size') + '</span>'; sb.setAttribute('aria-label', p.length ? 'Your size: ' + p.map(DripSize.label).join(', ') + ' — change' : 'Pick your size'); sb.classList.toggle('set', p.length > 0) };
+  paintSize(); document.addEventListener('drip:size', paintSize);
+  sb.onclick = () => { if (window.openSizePicker) window.openSizePicker(); else location.href = ROOT + 'index.html#size' };
+  bar.appendChild(sb);
   bar.appendChild(btn);
   backdrop = document.createElement('div'); backdrop.className = 'cbackdrop'; document.body.appendChild(backdrop);
   drawer = document.createElement('aside'); drawer.className = 'cdrawer'; drawer.setAttribute('aria-label', 'Cart'); drawer.hidden = true;
@@ -61,54 +77,27 @@ function openCart(on) {
   if (on) { drawer.hidden = false; requestAnimationFrame(() => { drawer.classList.add('on'); backdrop.classList.add('on') }); drawer.querySelector('.cx').focus() }
   else { drawer.classList.remove('on'); backdrop.classList.remove('on'); setTimeout(() => { drawer.hidden = true }, RM_ ? 0 : 260) }
 }
+/* orders placed from checkout.html are kept on this device so the buyer can find their reference */
+function pastOrders() {
+  let o = []; try { o = JSON.parse(localStorage.getItem('drip.orders.v1')) || [] } catch (e) {}
+  if (!o.length) return '';
+  return '<div class="cpast"><div class="mono">Your recent orders</div>' + o.slice(0, 4).map(x => `<div class="cpo"><b class="mono">${x.ref}</b><span>${x.n} ${x.n === 1 ? 'item' : 'items'} · ${money(x.total)}</span><i class="mono">${new Date(x.at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</i></div>`).join('') + '</div>';
+}
 function paint() {
   const c = load();
   if (btn) { const n = count(c); btn.querySelector('.cn').textContent = n; btn.classList.toggle('has', n > 0) }
   const body = document.getElementById('cbody'), foot = document.getElementById('cfoot');
   if (!body) return;
-  if (!c.length) { body.innerHTML = '<div class="cempty mono">Your bag is empty</div>'; foot.innerHTML = ''; return }
+  if (!c.length) { body.innerHTML = '<div class="cempty mono">Your bag is empty</div>' + pastOrders(); foot.innerHTML = ''; return }
   body.innerHTML = c.map((i, k) => `<div class="ci"><a class="cim" href="${ROOT}product/${i.spu}.html"><img src="${ROOT}images/${i.spu}_0.webp" alt=""></a>
     <div class="cinf"><a class="cnm" href="${ROOT}product/${i.spu}.html">${i.name}</a>
     ${(i.size || i.color) ? `<div class="csz mono">${[i.color ? 'Colour ' + i.color : '', i.size ? 'Size ' + i.size : ''].filter(Boolean).join(' · ')}</div>` : ''}<div class="cpr">${money(i.price)}</div></div>
     <div class="cqty"><button type="button" data-a="-" data-k="${k}" aria-label="Decrease quantity">−</button><span>${i.qty}</span><button type="button" data-a="+" data-k="${k}" aria-label="Increase quantity">+</button><button class="crm" type="button" data-a="x" data-k="${k}" aria-label="Remove">✕</button></div></div>`).join('');
-  const t = total(c), b = loadBuyer(), ref = orderRef();
-  foot.innerHTML = `<div class="crow"><span class="mono">Subtotal</span><b>${money(t)}</b></div>
-    <div class="cnote mono">Incl. VAT · shipping quoted per order · Ref ${ref}</div>
-    <div class="cform">
-      <label><span class="mono">Name *</span><input id="bname" value="${(b.name || '').replace(/"/g, '&quot;')}" autocomplete="name" placeholder="Име и фамилия"></label>
-      <label><span class="mono">Phone *</span><input id="bphone" value="${(b.phone || '').replace(/"/g, '&quot;')}" autocomplete="tel" inputmode="tel" placeholder="08xx xxx xxx"></label>
-      <label class="wide"><span class="mono">Delivery — town &amp; Econt office</span><input id="baddr" value="${(b.addr || '').replace(/"/g, '&quot;')}" autocomplete="street-address" placeholder="гр. София, Еконт офис …"></label>
-      <label class="wide"><span class="mono">Note</span><input id="bnote" value="${(b.note || '').replace(/"/g, '&quot;')}" placeholder="Друг размер, цвят, въпрос…"></label>
-    </div>
-    <div class="cbtns"><button class="cta copy" type="button">Copy order</button>${ORDER_WHATSAPP ? '<a class="cta wa" target="_blank" rel="noopener">WhatsApp</a>' : ''}${ORDER_EMAIL ? '<a class="cta mail">Email</a>' : ''}</div>
-    <div class="cerr mono" id="cerr"></div>`;
-  const fields = ['name', 'phone', 'addr', 'note'].map(k => [k, foot.querySelector('#b' + k)]);
-  const read = () => { const o = {}; fields.forEach(([k, el]) => o[k] = el.value.trim()); return o };
-  fields.forEach(([, el]) => el.addEventListener('input', () => saveBuyer(read())));
-  const err = foot.querySelector('#cerr');
-  const orderText = () => {
-    const d = read();
-    return `DRIP INDEX order ${ref}\n`
-      + c.map(i => `• ${i.name}${i.color ? ' / colour ' + i.color : ''}${i.size ? ' / size ' + i.size : ''} x${i.qty} — ${money(i.price * i.qty)}  (${location.origin}/product/${i.spu})`).join('\n')
-      + `\nTotal: ${money(t)}\n\nName: ${d.name}\nPhone: ${d.phone}`
-      + (d.addr ? `\nDelivery: ${d.addr}` : '') + (d.note ? `\nNote: ${d.note}` : '');
-  };
-  /* name and phone are what makes an order answerable — ask for them before sending */
-  const ready = () => {
-    const d = read();
-    if (!d.name || !d.phone) {
-      err.textContent = 'Add your name and phone so we can confirm the order';
-      (!d.name ? fields[0][1] : fields[1][1]).focus();
-      return false;
-    }
-    err.textContent = ''; saveBuyer(d); return true;
-  };
-  const cp = foot.querySelector('.copy');
-  cp.onclick = () => { if (!ready()) return; navigator.clipboard.writeText(orderText()).then(() => { cp.textContent = 'Copied ✓'; setTimeout(() => cp.textContent = 'Copy order', 1600) }) };
-  const wa = foot.querySelector('.wa');
-  if (wa) wa.onclick = e => { if (!ready()) { e.preventDefault(); return } wa.href = 'https://wa.me/' + ORDER_WHATSAPP + '?text=' + encodeURIComponent(orderText()) };
-  const ml = foot.querySelector('.mail');
-  if (ml) ml.onclick = e => { if (!ready()) { e.preventDefault(); return } ml.href = 'mailto:' + ORDER_EMAIL + '?subject=' + encodeURIComponent('DRIP INDEX order ' + ref) + '&body=' + encodeURIComponent(orderText()) };
+  const t = total(c), n = count(c);
+  foot.innerHTML = `<div class="crow"><span class="mono">Subtotal · ${n} ${n === 1 ? 'item' : 'items'}</span><b>${money(t)}</b></div>
+    <div class="cnote mono">Incl. VAT · Econt delivery · pay when it arrives</div>
+    <a class="cgo" href="${ROOT}checkout.html">Checkout <span aria-hidden="true">→</span></a>
+    ${ORDER_WHATSAPP ? `<a class="calt mono" target="_blank" rel="noopener" href="https://wa.me/${ORDER_WHATSAPP}?text=${encodeURIComponent('DRIP INDEX — I want to order:\n' + c.map(i => `• ${i.name}${i.color ? ' / ' + i.color : ''}${i.size ? ' / size ' + i.size : ''} x${i.qty}`).join('\n'))}">or send the bag on WhatsApp</a>` : ''}`;
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('.cqty button'); if (!b) return;
@@ -217,6 +206,19 @@ if (ld && pinfo) {
       const pick = () => { chips.forEach(x => { x.classList.remove('on'); x.setAttribute('aria-checked', 'false') }); ch.classList.add('on'); ch.setAttribute('aria-checked', 'true'); sel = ch; if (priceEl && ch.dataset.price) priceEl.textContent = money(+ch.dataset.price); if (err) err.textContent = '' };
       ch.onclick = pick; ch.onkeydown = e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick() } };
     });
+    /* the size picked in the "What's your size?" popup is preselected here, or we say it isn't stocked */
+    const prof = DripSize.profile() || [];
+    if (chips.length && prof.length) {
+      const m = DripSize.meta(chips.map(c => c.dataset.size));
+      const mine = prof.filter(k => m.keys.has(k));
+      const hint = document.createElement('div'); hint.className = 'myhint mono';
+      const mineKind = prof.filter(k => m.kind === 'shoe' ? k.startsWith('eu:') : k.startsWith('cl:'));
+      if (mine.length) {
+        const hit = chips.find(c => DripSize.keyOf(c.dataset.size, m.kind) === mine[0]);
+        if (hit) { setTimeout(() => hit.click(), 0); hint.innerHTML = '<i></i>Your size ' + DripSize.label(mine[0]) + ' is available — preselected'; hint.classList.add('ok') }
+      } else if (mineKind.length) hint.innerHTML = '<i></i>Your size ' + mineKind.map(DripSize.label).join(' / ') + ' isn’t listed for this piece';
+      if (hint.innerHTML) document.querySelector('.sizes').before(hint);
+    }
     const box = document.querySelector('.sizes') ? document.querySelector('.sizes').parentNode : pinfo;
     const wrap = document.createElement('div'); wrap.className = 'buybox';
     wrap.innerHTML = `<div class="qty"><button type="button" data-q="-" aria-label="Decrease quantity">−</button><span id="qn">1</span><button type="button" data-q="+" aria-label="Increase quantity">+</button></div>
