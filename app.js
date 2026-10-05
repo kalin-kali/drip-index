@@ -62,7 +62,7 @@ const LOOKS=[ // [brand, image, caption, brand regex, product-pick regex]
 ];
 const ROWS=[[1,'Trending now'],[2,'Latest finds'],[3,'Sneakers'],[10,'2026 World Cup kits']];
 
-fetch('data.json').then(r=>r.json()).then(d=>{D=d;prep();const sk=$('#sk');if(sk)sk.remove();buildCats();buildHero();buildMarquee();buildLooks();buildTiles();buildWanted();buildRows();wireNav();applyURL();revealAll()});
+fetch('data.json?v=a4ec7f3a').then(r=>r.json()).then(d=>{D=d;prep();const sk=$('#sk');if(sk)sk.remove();buildCats();buildHero();buildMarquee();buildLooks();buildTiles();buildWanted();buildRows();wireNav();applyURL();revealAll()});
 function applyURL(){const u=new URLSearchParams(location.search);const t=u.get('tab'),c=u.get('c'),qq=u.get('q');
  let go=readURL(u);
  /* no size in the link -> use the size this visitor picked before */

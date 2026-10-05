@@ -237,5 +237,5 @@
 
   summary(); payMode();
   /* real prices + weights, then payment buttons */
-  fetch('shop.json').then(r => r.json()).then(s => { SHOP = s; put(CART, cart); summary(); payMode() }).catch(() => {}).finally(loadPayPal);
+  fetch('shop.json?v=1b776bb2').then(r => r.json()).then(s => { SHOP = s; put(CART, cart); summary(); payMode() }).catch(() => {}).finally(loadPayPal);
 })();
